@@ -10,7 +10,7 @@ export const Header = () => {
             <Menu className="h-5 w-5" />
           </Button>
           <div className="bg-gradient-primary bg-clip-text text-transparent">
-            <h1 className="text-2xl font-bold">MoneyFlow</h1>
+            <h1 className="text-2xl font-bold">MoneyLab</h1>
           </div>
         </div>
         
