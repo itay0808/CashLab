@@ -50,6 +50,139 @@ export type Database = {
         }
         Relationships: []
       }
+      budget_periods: {
+        Row: {
+          budget_id: string
+          budgeted_amount: number
+          created_at: string
+          id: string
+          is_current: boolean
+          period_end: string
+          period_start: string
+          spent_amount: number
+        }
+        Insert: {
+          budget_id: string
+          budgeted_amount: number
+          created_at?: string
+          id?: string
+          is_current?: boolean
+          period_end: string
+          period_start: string
+          spent_amount?: number
+        }
+        Update: {
+          budget_id?: string
+          budgeted_amount?: number
+          created_at?: string
+          id?: string
+          is_current?: boolean
+          period_end?: string
+          period_start?: string
+          spent_amount?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "budget_periods_budget_id_fkey"
+            columns: ["budget_id"]
+            isOneToOne: false
+            referencedRelation: "budgets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      budget_transactions: {
+        Row: {
+          amount: number
+          budget_period_id: string
+          created_at: string
+          id: string
+          transaction_id: string
+        }
+        Insert: {
+          amount: number
+          budget_period_id: string
+          created_at?: string
+          id?: string
+          transaction_id: string
+        }
+        Update: {
+          amount?: number
+          budget_period_id?: string
+          created_at?: string
+          id?: string
+          transaction_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "budget_transactions_budget_period_id_fkey"
+            columns: ["budget_period_id"]
+            isOneToOne: false
+            referencedRelation: "budget_periods"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "budget_transactions_transaction_id_fkey"
+            columns: ["transaction_id"]
+            isOneToOne: false
+            referencedRelation: "transactions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      budgets: {
+        Row: {
+          alert_threshold: number | null
+          amount: number
+          category_id: string | null
+          created_at: string
+          end_date: string
+          id: string
+          is_active: boolean
+          name: string
+          period: string
+          start_date: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          alert_threshold?: number | null
+          amount: number
+          category_id?: string | null
+          created_at?: string
+          end_date: string
+          id?: string
+          is_active?: boolean
+          name: string
+          period: string
+          start_date: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          alert_threshold?: number | null
+          amount?: number
+          category_id?: string | null
+          created_at?: string
+          end_date?: string
+          id?: string
+          is_active?: boolean
+          name?: string
+          period?: string
+          start_date?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "budgets_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       categories: {
         Row: {
           color: string | null
