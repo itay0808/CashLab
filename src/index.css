@@ -2,39 +2,55 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
-*/
+/* Modern Fintech Design System - Rocket Money Style */
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
-
+    --background: 249 10% 98%;
+    --foreground: 224 20% 15%;
+    
+    /* Fintech brand colors */
+    --primary: 262 83% 58%;
+    --primary-light: 267 85% 68%;
+    --primary-dark: 258 85% 48%;
+    --secondary: 210 100% 96%;
+    --success: 142 76% 36%;
+    --success-light: 142 69% 58%;
+    --warning: 38 92% 50%;
+    --danger: 0 84% 60%;
+    
+    /* Gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(262 83% 58%), hsl(235 89% 62%));
+    --gradient-success: linear-gradient(135deg, hsl(142 76% 36%), hsl(158 64% 52%));
+    --gradient-card: linear-gradient(135deg, hsl(0 0% 100%), hsl(249 32% 97%));
+    --gradient-subtle: linear-gradient(180deg, hsl(249 32% 97%), hsl(0 0% 100%));
+    
+    /* Shadows */
+    --shadow-card: 0 1px 3px 0 hsl(0 0% 0% / 0.1), 0 1px 2px -1px hsl(0 0% 0% / 0.1);
+    --shadow-elevated: 0 10px 15px -3px hsl(0 0% 0% / 0.1), 0 4px 6px -4px hsl(0 0% 0% / 0.1);
+    --shadow-primary: 0 10px 30px -10px hsl(262 83% 58% / 0.3);
+    
+    /* Semantic UI colors */
     --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card-foreground: 224 20% 15%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover-foreground: 224 20% 15%;
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    --muted: 249 32% 97%;
+    --muted-foreground: 224 15% 55%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --accent: 235 89% 62%;
+    --accent-foreground: 0 0% 100%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    --border: 224 25% 90%;
+    --input: 224 25% 90%;
+    --ring: 262 83% 58%;
 
     --radius: 0.5rem;
 
