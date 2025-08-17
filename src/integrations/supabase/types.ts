@@ -266,6 +266,99 @@ export type Database = {
           },
         ]
       }
+      financial_insights: {
+        Row: {
+          action_required: boolean
+          created_at: string
+          description: string
+          expires_at: string | null
+          id: string
+          insight_type: string
+          is_dismissed: boolean
+          is_read: boolean
+          metadata: Json | null
+          priority: string
+          title: string
+          user_id: string
+        }
+        Insert: {
+          action_required?: boolean
+          created_at?: string
+          description: string
+          expires_at?: string | null
+          id?: string
+          insight_type: string
+          is_dismissed?: boolean
+          is_read?: boolean
+          metadata?: Json | null
+          priority: string
+          title: string
+          user_id: string
+        }
+        Update: {
+          action_required?: boolean
+          created_at?: string
+          description?: string
+          expires_at?: string | null
+          id?: string
+          insight_type?: string
+          is_dismissed?: boolean
+          is_read?: boolean
+          metadata?: Json | null
+          priority?: string
+          title?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      investments: {
+        Row: {
+          created_at: string
+          current_price: number | null
+          id: string
+          investment_type: string
+          last_updated: string | null
+          name: string
+          notes: string | null
+          purchase_date: string
+          purchase_price: number
+          quantity: number
+          symbol: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          current_price?: number | null
+          id?: string
+          investment_type: string
+          last_updated?: string | null
+          name: string
+          notes?: string | null
+          purchase_date: string
+          purchase_price: number
+          quantity?: number
+          symbol?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          current_price?: number | null
+          id?: string
+          investment_type?: string
+          last_updated?: string | null
+          name?: string
+          notes?: string | null
+          purchase_date?: string
+          purchase_price?: number
+          quantity?: number
+          symbol?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           created_at: string
@@ -291,6 +384,60 @@ export type Database = {
           email?: string | null
           full_name?: string | null
           id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      recurring_transactions: {
+        Row: {
+          account_id: string
+          amount: number
+          category_id: string | null
+          created_at: string
+          end_date: string | null
+          frequency: string
+          id: string
+          is_active: boolean
+          name: string
+          next_due_date: string
+          notes: string | null
+          start_date: string
+          type: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          account_id: string
+          amount: number
+          category_id?: string | null
+          created_at?: string
+          end_date?: string | null
+          frequency: string
+          id?: string
+          is_active?: boolean
+          name: string
+          next_due_date: string
+          notes?: string | null
+          start_date: string
+          type: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          account_id?: string
+          amount?: number
+          category_id?: string | null
+          created_at?: string
+          end_date?: string | null
+          frequency?: string
+          id?: string
+          is_active?: boolean
+          name?: string
+          next_due_date?: string
+          notes?: string | null
+          start_date?: string
+          type?: string
           updated_at?: string
           user_id?: string
         }
@@ -451,7 +598,14 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      calculate_investment_performance: {
+        Args: { investment_id_param: string }
+        Returns: {
+          percentage_change: number
+          total_gain_loss: number
+          total_value: number
+        }[]
+      }
     }
     Enums: {
       [_ in never]: never
