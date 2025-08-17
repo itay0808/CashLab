@@ -183,6 +183,48 @@ export type Database = {
           },
         ]
       }
+      cash_flow_projections: {
+        Row: {
+          actual_balance: number | null
+          actual_expenses: number | null
+          actual_income: number | null
+          created_at: string
+          id: string
+          projected_balance: number
+          projected_expenses: number
+          projected_income: number
+          projection_date: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          actual_balance?: number | null
+          actual_expenses?: number | null
+          actual_income?: number | null
+          created_at?: string
+          id?: string
+          projected_balance?: number
+          projected_expenses?: number
+          projected_income?: number
+          projection_date: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          actual_balance?: number | null
+          actual_expenses?: number | null
+          actual_income?: number | null
+          created_at?: string
+          id?: string
+          projected_balance?: number
+          projected_expenses?: number
+          projected_income?: number
+          projection_date?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       categories: {
         Row: {
           color: string | null
@@ -249,6 +291,93 @@ export type Database = {
           email?: string | null
           full_name?: string | null
           id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      savings_goal_transactions: {
+        Row: {
+          amount: number
+          created_at: string
+          description: string | null
+          goal_id: string
+          id: string
+          transaction_id: string | null
+          transaction_type: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          description?: string | null
+          goal_id: string
+          id?: string
+          transaction_id?: string | null
+          transaction_type: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          description?: string | null
+          goal_id?: string
+          id?: string
+          transaction_id?: string | null
+          transaction_type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "savings_goal_transactions_goal_id_fkey"
+            columns: ["goal_id"]
+            isOneToOne: false
+            referencedRelation: "savings_goals"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "savings_goal_transactions_transaction_id_fkey"
+            columns: ["transaction_id"]
+            isOneToOne: false
+            referencedRelation: "transactions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      savings_goals: {
+        Row: {
+          created_at: string
+          current_amount: number
+          description: string | null
+          id: string
+          is_active: boolean
+          monthly_contribution: number | null
+          name: string
+          target_amount: number
+          target_date: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          current_amount?: number
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          monthly_contribution?: number | null
+          name: string
+          target_amount: number
+          target_date?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          current_amount?: number
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          monthly_contribution?: number | null
+          name?: string
+          target_amount?: number
+          target_date?: string | null
           updated_at?: string
           user_id?: string
         }
