@@ -11,6 +11,8 @@ import Budgets from "./pages/Budgets";
 import Investments from "./pages/Investments";
 import Accounts from "./pages/Accounts";
 import Transactions from "./pages/Transactions";
+import Reports from "./pages/Reports";
+import Recurring from "./pages/Recurring";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -30,7 +32,8 @@ const App = () => (
             <Route path="/budgets" element={<Budgets />} />
             <Route path="/goals" element={<Goals />} />
             <Route path="/investments" element={<Investments />} />
-            {/* Additional pages will be added here */}
+            <Route path="/reports" element={<Reports />} />
+            <Route path="/recurring" element={<Recurring />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </AuthProvider>
