@@ -56,7 +56,7 @@ export const Navigation = () => {
               <div className="p-2 bg-primary rounded-lg">
                 <BarChart3 className="h-6 w-6 text-primary-foreground" />
               </div>
-              <span className="text-xl font-bold">FinanceTracker</span>
+              <span className="text-xl font-bold">MoneyLab</span>
             </Link>
 
             <div className="hidden sm:flex items-center gap-1">
