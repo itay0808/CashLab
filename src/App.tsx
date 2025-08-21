@@ -8,11 +8,9 @@ import Dashboard from "./pages/Dashboard";
 import Auth from "./pages/Auth";
 import Goals from "./pages/Goals";
 import Budgets from "./pages/Budgets";
-import Investments from "./pages/Investments";
+
 import Accounts from "./pages/Accounts";
 import Transactions from "./pages/Transactions";
-import Reports from "./pages/Reports";
-import Recurring from "./pages/Recurring";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -31,9 +29,6 @@ const App = () => (
             <Route path="/transactions" element={<Transactions />} />
             <Route path="/budgets" element={<Budgets />} />
             <Route path="/goals" element={<Goals />} />
-            <Route path="/investments" element={<Investments />} />
-            <Route path="/reports" element={<Reports />} />
-            <Route path="/recurring" element={<Recurring />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </AuthProvider>

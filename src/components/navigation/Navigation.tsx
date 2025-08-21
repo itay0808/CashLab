@@ -28,9 +28,6 @@ const navigation = [
   { name: "Transactions", href: "/transactions", icon: Receipt },
   { name: "Budgets", href: "/budgets", icon: Calculator },
   { name: "Goals", href: "/goals", icon: Target },
-  { name: "Investments", href: "/investments", icon: TrendingUp },
-  { name: "Reports", href: "/reports", icon: BarChart3 },
-  { name: "Recurring", href: "/recurring", icon: Repeat },
 ];
 
 export const Navigation = () => {
@@ -56,7 +53,7 @@ export const Navigation = () => {
               <div className="p-2 bg-primary rounded-lg">
                 <BarChart3 className="h-6 w-6 text-primary-foreground" />
               </div>
-              <span className="text-xl font-bold">MoneyLab</span>
+              <span className="text-xl font-bold">Cashlab</span>
             </Link>
 
             <div className="hidden sm:flex items-center gap-1">
@@ -103,11 +100,6 @@ export const Navigation = () => {
                     </p>
                   </div>
                 </div>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem>
-                  <User className="mr-2 h-4 w-4" />
-                  <span>Profile</span>
-                </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={handleSignOut}>
                   <LogOut className="mr-2 h-4 w-4" />
