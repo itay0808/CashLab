@@ -100,7 +100,7 @@ const Transactions = () => {
       <AddTransactionDialog 
         open={showAddTransaction} 
         onOpenChange={setShowAddTransaction}
-        onSuccess={() => setShowAddTransaction(false)}
+        onTransactionAdded={() => setShowAddTransaction(false)}
       />
     </div>
   );

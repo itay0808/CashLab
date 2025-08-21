@@ -90,15 +90,11 @@ const Goals = () => {
       </main>
 
       <CreateSavingsGoalDialog 
-        open={showCreateGoal} 
-        onOpenChange={setShowCreateGoal}
-        onSuccess={() => setShowCreateGoal(false)}
+        onGoalCreated={() => setShowCreateGoal(false)}
       />
       
       <AddInvestmentDialog
-        open={showAddInvestment}
-        onOpenChange={setShowAddInvestment}
-        onSuccess={() => setShowAddInvestment(false)}
+        onInvestmentAdded={() => setShowAddInvestment(false)}
       />
     </div>
   );
