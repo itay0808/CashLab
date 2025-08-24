@@ -33,6 +33,7 @@ export const SubscriptionsTracker = () => {
   }, [user]);
 
   const fetchSubscriptions = async () => {
+    console.log('Fetching subscriptions...');
     try {
       const { data, error } = await supabase
         .from('recurring_transactions')
@@ -49,9 +50,12 @@ export const SubscriptionsTracker = () => {
         .order('next_due_date', { ascending: true })
         .limit(4);
 
+      console.log('Subscriptions query result:', { data, error });
       if (error) throw error;
+      console.log('Setting subscriptions:', data);
       setSubscriptions(data || []);
     } catch (error) {
+      console.error('Subscriptions error:', error);
       toast({
         title: "Error",
         description: "Failed to load subscriptions",

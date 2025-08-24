@@ -68,9 +68,9 @@ export const BudgetAnalytics = ({ refreshTrigger = 0 }: BudgetAnalyticsProps) =>
   };
 
   const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('en-US', {
+    return new Intl.NumberFormat('he-IL', {
       style: 'currency',
-      currency: 'USD',
+      currency: 'ILS',
       minimumFractionDigits: 0,
       maximumFractionDigits: 0,
     }).format(amount);

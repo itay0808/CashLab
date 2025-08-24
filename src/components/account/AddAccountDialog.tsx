@@ -104,16 +104,12 @@ export const AddAccountDialog = ({ open, onOpenChange, onAccountAdded }: AddAcco
 
           <div className="space-y-2">
             <Label htmlFor="currency">Currency</Label>
-            <Select name="currency" defaultValue="USD">
+            <Select name="currency" defaultValue="ILS">
               <SelectTrigger>
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="USD">USD ($)</SelectItem>
-                <SelectItem value="EUR">EUR (€)</SelectItem>
-                <SelectItem value="GBP">GBP (£)</SelectItem>
                 <SelectItem value="ILS">ILS (₪)</SelectItem>
-                <SelectItem value="CAD">CAD (C$)</SelectItem>
               </SelectContent>
             </Select>
           </div>

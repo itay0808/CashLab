@@ -127,7 +127,7 @@ const Accounts = () => {
           </CardHeader>
           <CardContent>
             <div className="text-3xl font-bold">
-              {showBalances ? `$${totalBalance.toLocaleString()}` : '••••••'}
+              {showBalances ? `₪${totalBalance.toLocaleString('he-IL', { minimumFractionDigits: 2 })}` : '••••••'}
             </div>
             <p className="text-primary-foreground/80 mt-2">
               Across {accounts.length} account{accounts.length !== 1 ? 's' : ''}
@@ -184,7 +184,7 @@ const Accounts = () => {
                     <p className="text-sm text-muted-foreground">Balance</p>
                     <p className="text-2xl font-bold">
                       {showBalances 
-                        ? `$${Number(account.balance).toLocaleString()}` 
+                        ? `₪${Number(account.balance).toLocaleString('he-IL', { minimumFractionDigits: 2 })}` 
                         : '••••••'
                       }
                     </p>
