@@ -86,6 +86,30 @@ export const SubscriptionsTracker = () => {
 
   const expiringSoonCount = subscriptions.filter(sub => isExpiringSoon(sub.next_due_date)).length;
 
+  const handleDeleteSubscription = async (id: string) => {
+    try {
+      const { error } = await supabase
+        .from('recurring_transactions')
+        .update({ is_active: false })
+        .eq('id', id);
+
+      if (error) throw error;
+
+      toast({
+        title: "Success",
+        description: "Subscription cancelled successfully",
+      });
+      
+      fetchSubscriptions();
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to cancel subscription",
+        variant: "destructive",
+      });
+    }
+  };
+
   if (loading) {
     return (
       <Card className="p-6 bg-gradient-card shadow-card">
@@ -116,7 +140,7 @@ export const SubscriptionsTracker = () => {
         <div>
           <h3 className="text-lg font-semibold">Subscriptions</h3>
           <p className="text-sm text-muted-foreground">
-            ${totalMonthly.toFixed(2)}/month • {subscriptions.length} active
+            ₪{totalMonthly.toFixed(2)}/month • {subscriptions.length} active
           </p>
         </div>
         <Button variant="outline" size="sm" className="text-primary border-primary/20 hover:bg-primary/10">
@@ -163,8 +187,13 @@ export const SubscriptionsTracker = () => {
                 </div>
 
                 <div className="flex items-center gap-2">
-                  <span className="font-semibold">${sub.amount}</span>
-                  <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-danger">
+                  <span className="font-semibold">₪{sub.amount}</span>
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    className="text-muted-foreground hover:text-danger"
+                    onClick={() => handleDeleteSubscription(sub.id)}
+                  >
                     <X className="h-4 w-4" />
                   </Button>
                 </div>

@@ -76,7 +76,7 @@ export const AccountBalance = () => {
           <h3 className="text-sm font-medium text-white/80">Total Balance</h3>
           <div className="flex items-center gap-3">
             <span className="text-3xl font-bold">
-              {showBalance ? `$${totalBalance.toLocaleString('en-US', { minimumFractionDigits: 2 })}` : "••••••"}
+              {showBalance ? `₪${totalBalance.toLocaleString('he-IL', { minimumFractionDigits: 2 })}` : "••••••"}
             </span>
             <Button 
               variant="ghost" 
@@ -114,7 +114,7 @@ export const AccountBalance = () => {
               </div>
               <div className="mt-2">
                 <div className="text-lg font-semibold">
-                  {showBalance ? `$${Math.abs(account.balance).toLocaleString('en-US', { minimumFractionDigits: 2 })}` : "••••"}
+                  {showBalance ? `₪${Math.abs(account.balance).toLocaleString('he-IL', { minimumFractionDigits: 2 })}` : "••••"}
                   {account.balance < 0 && <span className="text-xs ml-1">owed</span>}
                 </div>
                 <div className="text-xs text-white/60 capitalize">

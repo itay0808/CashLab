@@ -9,6 +9,7 @@ import { useState } from "react";
 const Budgets = () => {
   const { user, loading } = useAuth();
   const [showBudgetManagement, setShowBudgetManagement] = useState(false);
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
 
   if (loading) {
     return (
@@ -28,14 +29,14 @@ const Budgets = () => {
       
       <main className="max-w-7xl mx-auto p-6 space-y-8">
         <div className="space-y-6">
-          <BudgetOverview onCreateBudget={() => setShowBudgetManagement(true)} />
+          <BudgetOverview onCreateBudget={() => setShowBudgetManagement(true)} refreshTrigger={refreshTrigger} />
           <BudgetAnalytics />
         </div>
 
         <BudgetManagementDialog
           open={showBudgetManagement}
           onOpenChange={setShowBudgetManagement}
-          onBudgetChange={() => {}}
+          onBudgetChange={() => setRefreshTrigger(prev => prev + 1)}
         />
       </main>
     </div>

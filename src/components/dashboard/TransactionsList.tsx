@@ -156,7 +156,7 @@ export const TransactionsList = () => {
                     transaction.amount > 0 ? 'text-success' : 'text-foreground'
                   }`}>
                     <div className="font-semibold">
-                      {transaction.amount > 0 ? '+' : ''}${Math.abs(transaction.amount).toFixed(2)}
+                      {transaction.amount > 0 ? '+' : ''}₪{Math.abs(transaction.amount).toFixed(2)}
                     </div>
                   </div>
                   {transaction.amount > 0 ? (

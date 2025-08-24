@@ -90,6 +90,11 @@ export const AddTransactionDialog = ({ open, onOpenChange, onTransactionAdded }:
     const type = formData.get('type') as string;
     const transactionDate = formData.get('date') as string;
 
+    const recurring = formData.get('recurring') as string;
+    const recurringEnd = formData.get('recurringEnd') as string;
+    const userId = (await supabase.auth.getUser()).data.user?.id;
+
+    // Insert transaction
     const { error } = await supabase
       .from('transactions')
       .insert([{
@@ -100,8 +105,50 @@ export const AddTransactionDialog = ({ open, onOpenChange, onTransactionAdded }:
         account_id: accountId,
         type,
         transaction_date: transactionDate,
-        user_id: (await supabase.auth.getUser()).data.user?.id,
+        user_id: userId,
+        is_recurring: recurring !== 'no',
       }]);
+
+    // If recurring, also create recurring transaction
+    if (recurring !== 'no' && !error) {
+      const nextDueDate = new Date(transactionDate);
+      switch (recurring) {
+        case 'daily':
+          nextDueDate.setDate(nextDueDate.getDate() + 1);
+          break;
+        case 'weekly':
+          nextDueDate.setDate(nextDueDate.getDate() + 7);
+          break;
+        case 'biweekly':
+          nextDueDate.setDate(nextDueDate.getDate() + 14);
+          break;
+        case 'monthly':
+          nextDueDate.setMonth(nextDueDate.getMonth() + 1);
+          break;
+        case 'quarterly':
+          nextDueDate.setMonth(nextDueDate.getMonth() + 3);
+          break;
+        case 'yearly':
+          nextDueDate.setFullYear(nextDueDate.getFullYear() + 1);
+          break;
+      }
+
+      await supabase
+        .from('recurring_transactions')
+        .insert([{
+          name: description,
+          amount: type === 'expense' ? -Math.abs(amount) : Math.abs(amount),
+          type,
+          frequency: recurring,
+          start_date: transactionDate,
+          end_date: recurringEnd || null,
+          next_due_date: nextDueDate.toISOString().split('T')[0],
+          account_id: accountId,
+          category_id: categoryId || null,
+          notes: notes || null,
+          user_id: userId,
+        }]);
+    }
 
     if (error) {
       toast({
@@ -218,6 +265,34 @@ export const AddTransactionDialog = ({ open, onOpenChange, onTransactionAdded }:
               name="notes"
               placeholder="Additional notes"
               rows={2}
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="recurring">Make Recurring</Label>
+            <Select name="recurring" defaultValue="no">
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="no">No</SelectItem>
+                <SelectItem value="daily">Daily</SelectItem>
+                <SelectItem value="weekly">Weekly</SelectItem>
+                <SelectItem value="biweekly">Bi-weekly</SelectItem>
+                <SelectItem value="monthly">Monthly</SelectItem>
+                <SelectItem value="quarterly">Quarterly</SelectItem>
+                <SelectItem value="yearly">Yearly</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="recurringEnd">Recurring End (optional)</Label>
+            <Input
+              id="recurringEnd"
+              name="recurringEnd"
+              type="date"
+              placeholder="Leave empty for forever"
             />
           </div>
 

@@ -29,14 +29,14 @@ interface BudgetOverviewProps {
   onCreateBudget: () => void;
 }
 
-export const BudgetOverview = ({ onCreateBudget }: BudgetOverviewProps) => {
+export const BudgetOverview = ({ onCreateBudget, refreshTrigger }: BudgetOverviewProps & { refreshTrigger?: number }) => {
   const [budgetPeriods, setBudgetPeriods] = useState<BudgetPeriod[]>([]);
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
 
   useEffect(() => {
     fetchBudgetPeriods();
-  }, []);
+  }, [refreshTrigger]);
 
   const fetchBudgetPeriods = async () => {
     try {
@@ -73,9 +73,9 @@ export const BudgetOverview = ({ onCreateBudget }: BudgetOverviewProps) => {
   };
 
   const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('en-US', {
+    return new Intl.NumberFormat('he-IL', {
       style: 'currency',
-      currency: 'USD'
+      currency: 'ILS'
     }).format(amount);
   };
 
