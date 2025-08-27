@@ -7,6 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Plus, Receipt, Repeat, CreditCard } from "lucide-react";
 import { TransactionsList } from "@/components/dashboard/TransactionsList";
 import { SubscriptionsTracker } from "@/components/dashboard/SubscriptionsTracker";
+import { RecurringTransactionsList } from "@/components/recurring/RecurringTransactionsList";
 import { AddTransactionDialog } from "@/components/transaction/AddTransactionDialog";
 import { useState } from "react";
 
@@ -35,8 +36,8 @@ const Transactions = () => {
       <main className="max-w-7xl mx-auto p-6 space-y-8">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold">Transactions & Recurring</h1>
-            <p className="text-muted-foreground">Manage your transactions, subscriptions and recurring payments</p>
+            <h1 className="text-3xl font-bold">Transactions</h1>
+            <p className="text-muted-foreground">Manage your transactions and recurring payments</p>
           </div>
           <Button onClick={() => setShowAddTransaction(true)}>
             <Plus className="h-4 w-4 mr-2" />
@@ -45,14 +46,10 @@ const Transactions = () => {
         </div>
 
         <Tabs defaultValue="transactions" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-3">
+          <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="transactions" className="gap-2">
               <Receipt className="h-4 w-4" />
-              Transactions
-            </TabsTrigger>
-            <TabsTrigger value="recurring" className="gap-2">
-              <Repeat className="h-4 w-4" />
-              Recurring
+              All Transactions
             </TabsTrigger>
             <TabsTrigger value="subscriptions" className="gap-2">
               <CreditCard className="h-4 w-4" />
@@ -61,27 +58,25 @@ const Transactions = () => {
           </TabsList>
 
           <TabsContent value="transactions">
-            <Card>
-              <CardHeader>
-                <CardTitle>Recent Transactions</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <TransactionsList />
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          <TabsContent value="recurring">
-            <Card>
-              <CardHeader>
-                <CardTitle>Recurring Transactions</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-center py-8 text-muted-foreground">
-                  Recurring transactions functionality coming soon
-                </div>
-              </CardContent>
-            </Card>
+            <div className="space-y-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Recent Transactions</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <TransactionsList />
+                </CardContent>
+              </Card>
+              
+              <Card>
+                <CardHeader>
+                  <CardTitle>Recurring Transactions</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <RecurringTransactionsList />
+                </CardContent>
+              </Card>
+            </div>
           </TabsContent>
 
           <TabsContent value="subscriptions">

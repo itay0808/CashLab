@@ -147,7 +147,12 @@ export const SubscriptionsTracker = () => {
             ₪{totalMonthly.toFixed(2)}/month • {subscriptions.length} active
           </p>
         </div>
-        <Button variant="outline" size="sm" className="text-primary border-primary/20 hover:bg-primary/10">
+        <Button 
+          variant="outline" 
+          size="sm" 
+          className="text-primary border-primary/20 hover:bg-primary/10"
+          onClick={() => window.location.href = '/transactions'}
+        >
           <Plus className="h-4 w-4 mr-1" />
           Add New
         </Button>
@@ -157,7 +162,11 @@ export const SubscriptionsTracker = () => {
         <div className="text-center py-8">
           <Calendar className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
           <p className="text-muted-foreground mb-4">No active subscriptions found</p>
-          <Button variant="outline" size="sm">
+          <Button 
+            variant="outline" 
+            size="sm"
+            onClick={() => window.location.href = '/transactions'}
+          >
             <Plus className="h-4 w-4 mr-1" />
             Add Subscription
           </Button>
