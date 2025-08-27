@@ -14,9 +14,10 @@ import { useAuth } from "@/hooks/useAuth";
 
 interface CreateSavingsGoalDialogProps {
   onGoalCreated?: () => void;
+  children?: React.ReactNode;
 }
 
-export const CreateSavingsGoalDialog = ({ onGoalCreated }: CreateSavingsGoalDialogProps) => {
+export const CreateSavingsGoalDialog = ({ onGoalCreated, children }: CreateSavingsGoalDialogProps) => {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [name, setName] = useState("");
@@ -93,10 +94,12 @@ export const CreateSavingsGoalDialog = ({ onGoalCreated }: CreateSavingsGoalDial
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button className="gap-2">
-          <Plus className="h-4 w-4" />
-          New Goal
-        </Button>
+        {children || (
+          <Button className="gap-2">
+            <Plus className="h-4 w-4" />
+            New Goal
+          </Button>
+        )}
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>

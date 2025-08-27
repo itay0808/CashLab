@@ -103,19 +103,25 @@ export const SavingsGoal = () => {
             <p className="text-sm text-white/80">Smart Savings Goal</p>
           </div>
         </div>
-        <Button variant="ghost" size="sm" className="text-white hover:bg-white/10">
-          <Plus className="h-4 w-4" />
-        </Button>
+        <CreateSavingsGoalDialog onGoalCreated={handleGoalUpdated}>
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            className="text-white hover:bg-white/10"
+          >
+            <Plus className="h-4 w-4" />
+          </Button>
+        </CreateSavingsGoalDialog>
       </div>
 
         <div className="space-y-4">
           <div>
             <div className="flex justify-between items-end mb-2">
               <span className="text-2xl font-bold">
-                ${goal.current_amount.toLocaleString()}
+                ₪{goal.current_amount.toLocaleString('he-IL', { minimumFractionDigits: 2 })}
               </span>
               <span className="text-sm text-white/80">
-                of ${goal.target_amount.toLocaleString()}
+                of ₪{goal.target_amount.toLocaleString('he-IL', { minimumFractionDigits: 2 })}
               </span>
             </div>
             <Progress value={progress} className="h-2 bg-white/20" />
@@ -125,7 +131,7 @@ export const SavingsGoal = () => {
             {goal.monthly_contribution && (
               <div className="bg-white/10 rounded-lg p-3">
                 <div className="text-sm text-white/80">Monthly Goal</div>
-                <div className="font-semibold">${goal.monthly_contribution}</div>
+                <div className="font-semibold">₪{goal.monthly_contribution}</div>
               </div>
             )}
             {monthsToGoal && (
