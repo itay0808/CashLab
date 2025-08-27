@@ -15,7 +15,6 @@ import { useState } from "react";
 const Transactions = () => {
   const { user, loading } = useAuth();
   const [showAddTransaction, setShowAddTransaction] = useState(false);
-  const [refreshTrigger, setRefreshTrigger] = useState(0);
 
   if (loading) {
     return (
@@ -29,9 +28,6 @@ const Transactions = () => {
     return <Navigate to="/auth" replace />;
   }
 
-  const handleDataRefresh = () => {
-    setRefreshTrigger(prev => prev + 1);
-  };
 
   return (
     <div className="min-h-screen bg-gradient-subtle">
@@ -68,7 +64,7 @@ const Transactions = () => {
                   <CardTitle>Recent Transactions</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <TransactionsList key={refreshTrigger} />
+                  <TransactionsList />
                 </CardContent>
               </Card>
               
@@ -77,7 +73,7 @@ const Transactions = () => {
                   <CardTitle>Recurring Transactions</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <RecurringTransactionsList key={refreshTrigger} />
+                  <RecurringTransactionsList />
                 </CardContent>
               </Card>
             </div>
@@ -89,7 +85,7 @@ const Transactions = () => {
                 <CardTitle>Active Subscriptions</CardTitle>
               </CardHeader>
               <CardContent>
-                <SubscriptionsTracker key={refreshTrigger} />
+                <SubscriptionsTracker />
               </CardContent>
             </Card>
           </TabsContent>
@@ -99,7 +95,7 @@ const Transactions = () => {
       <AddTransactionDialog 
         open={showAddTransaction} 
         onOpenChange={setShowAddTransaction}
-        onTransactionAdded={handleDataRefresh}
+        onTransactionAdded={() => setShowAddTransaction(false)}
       />
     </div>
   );

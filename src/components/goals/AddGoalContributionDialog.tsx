@@ -66,7 +66,7 @@ export const AddGoalContributionDialog = ({ goalId, goalName, onContributionAdde
 
       toast({
         title: transactionType === "contribution" ? "Contribution added" : "Withdrawal recorded",
-        description: `₪${amount} has been ${transactionType === "contribution" ? "added to" : "withdrawn from"} ${goalName}.`,
+        description: `$${amount} has been ${transactionType === "contribution" ? "added to" : "withdrawn from"} ${goalName}.`,
       });
 
       // Reset form
