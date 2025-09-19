@@ -49,14 +49,14 @@ const Dashboard = () => {
           </div>
         </div>
 
+        {/* Financial Overview */}
+        <div className="space-y-4">
+          <AccountBalance key={refreshTrigger} />
+        </div>
+
         {/* Main Calendar Section - Featured */}
         <div className="space-y-4">
           <TransactionCalendar key={refreshTrigger} />
-        </div>
-
-        {/* Financial Overview Row */}
-        <div className="space-y-4">
-          <AccountBalance key={refreshTrigger} />
         </div>
 
         {/* Budget Section */}
