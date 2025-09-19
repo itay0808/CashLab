@@ -4,7 +4,7 @@ import { Navigation } from "@/components/navigation/Navigation";
 import { AccountBalance } from "@/components/dashboard/AccountBalance";
 import { SpendingChart } from "@/components/dashboard/SpendingChart";
 import { SubscriptionsTracker } from "@/components/dashboard/SubscriptionsTracker";
-
+import { Clock } from "@/components/dashboard/Clock";
 import { TransactionsList } from "@/components/dashboard/TransactionsList";
 import { TransactionCalendar } from "@/components/dashboard/TransactionCalendar";
 import { BudgetOverview } from "@/components/budget/BudgetOverview";
@@ -71,7 +71,10 @@ const Dashboard = () => {
         {/* Analytics Row */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
           <SpendingChart key={refreshTrigger} />
-          <SubscriptionsTracker key={refreshTrigger} />
+          <div className="space-y-4">
+            <Clock />
+            <SubscriptionsTracker key={refreshTrigger} />
+          </div>
         </div>
 
         {/* Recent Activity Section */}

@@ -83,6 +83,18 @@ export const RecurringTransactionsList = () => {
         title: "Success",
         description: "Recurring transaction cancelled successfully",
       });
+
+      // Log the cancellation
+      await supabase.rpc('log_financial_activity', {
+        p_user_id: user?.id,
+        p_action_type: 'CANCEL',
+        p_entity_type: 'RECURRING_TRANSACTION',
+        p_entity_id: id,
+        p_description: `Cancelled recurring transaction`,
+        p_metadata: {
+          action: 'cancelled'
+        }
+      });
       
       fetchRecurringTransactions();
     } catch (error) {

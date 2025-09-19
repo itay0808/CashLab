@@ -11,7 +11,8 @@ import {
   BarChart3, 
   Repeat,
   LogOut,
-  User
+  User,
+  Settings
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -25,6 +26,7 @@ const navigation = [
   { name: "Dashboard", href: "/", icon: Home },
   { name: "Transactions", href: "/transactions", icon: Receipt },
   { name: "Budgets", href: "/budgets", icon: Calculator },
+  { name: "Settings", href: "/settings", icon: Settings },
 ];
 
 export const Navigation = () => {

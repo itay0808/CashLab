@@ -86,6 +86,20 @@ export const SavingsTransferDialog = ({
         description: `Transfer completed successfully`,
       });
 
+      // Log the transfer activity
+      await supabase.rpc('log_financial_activity', {
+        p_user_id: user.user.id,
+        p_action_type: 'TRANSFER',
+        p_entity_type: 'SAVINGS_TRANSFER',
+        p_description: `${transferType === 'to_savings' ? 'Transfer to savings' : 'Transfer from savings'}: ₪${transferAmount}`,
+        p_amount: transferType === 'to_savings' ? -transferAmount : transferAmount,
+        p_metadata: {
+          transfer_type: transferType,
+          amount: transferAmount,
+          description: description || null
+        }
+      });
+
       onTransferCompleted();
       onOpenChange(false);
       setAmount('');

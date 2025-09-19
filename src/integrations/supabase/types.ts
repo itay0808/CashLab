@@ -595,6 +595,48 @@ export type Database = {
         }
         Relationships: []
       }
+      system_logs: {
+        Row: {
+          action_type: string
+          amount: number | null
+          created_at: string
+          description: string
+          entity_id: string | null
+          entity_type: string
+          id: string
+          metadata: Json | null
+          new_value: Json | null
+          old_value: Json | null
+          user_id: string
+        }
+        Insert: {
+          action_type: string
+          amount?: number | null
+          created_at?: string
+          description: string
+          entity_id?: string | null
+          entity_type: string
+          id?: string
+          metadata?: Json | null
+          new_value?: Json | null
+          old_value?: Json | null
+          user_id: string
+        }
+        Update: {
+          action_type?: string
+          amount?: number | null
+          created_at?: string
+          description?: string
+          entity_id?: string | null
+          entity_type?: string
+          id?: string
+          metadata?: Json | null
+          new_value?: Json | null
+          old_value?: Json | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       transactions: {
         Row: {
           account_id: string
@@ -678,6 +720,20 @@ export type Database = {
       get_or_create_savings_account: {
         Args: { user_id_param: string }
         Returns: string
+      }
+      log_financial_activity: {
+        Args: {
+          p_action_type: string
+          p_amount?: number
+          p_description?: string
+          p_entity_id?: string
+          p_entity_type: string
+          p_metadata?: Json
+          p_new_value?: Json
+          p_old_value?: Json
+          p_user_id: string
+        }
+        Returns: undefined
       }
       process_due_recurring_transactions: {
         Args: Record<PropertyKey, never>
