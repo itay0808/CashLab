@@ -58,3 +58,6 @@ ip_version = "ipv4"
 
 [functions.process-recurring-transactions]
 verify_jwt = false
+
+[functions.delete-user-account]
+verify_jwt = true
