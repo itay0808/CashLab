@@ -13,7 +13,6 @@ import {
   FileText, 
   User, 
   Shield,
-  Bell,
   Palette
 } from 'lucide-react';
 
@@ -86,8 +85,10 @@ export const Settings = () => {
                       Update your personal information and preferences
                     </p>
                   </div>
-                  <Button variant="outline" size="sm">
-                    Edit Profile
+                  <Button variant="outline" size="sm" asChild>
+                    <Link to="/edit-profile">
+                      Edit Profile
+                    </Link>
                   </Button>
                 </div>
               </div>
@@ -118,47 +119,10 @@ export const Settings = () => {
                   </Button>
                 </div>
 
-                <Separator />
-
-                <div className="flex items-center justify-between">
-                  <div className="space-y-1">
-                    <h3 className="font-medium">Notifications</h3>
-                    <p className="text-sm text-muted-foreground">
-                      Configure how you receive notifications
-                    </p>
-                  </div>
-                  <Button variant="outline" size="sm">
-                    <Bell className="h-4 w-4 mr-2" />
-                    Configure
-                  </Button>
-                </div>
               </div>
             </div>
           </Card>
 
-          {/* Danger Zone */}
-          <Card className="bg-gradient-card shadow-elevated border-destructive/20">
-            <div className="p-6">
-              <div className="flex items-center gap-3 mb-6">
-                <Shield className="h-5 w-5 text-destructive" />
-                <h2 className="text-xl font-semibold text-destructive">Danger Zone</h2>
-              </div>
-
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <div className="space-y-1">
-                    <h3 className="font-medium">Delete Account</h3>
-                    <p className="text-sm text-muted-foreground">
-                      Permanently delete your account and all associated data
-                    </p>
-                  </div>
-                  <Button variant="destructive" size="sm">
-                    Delete Account
-                  </Button>
-                </div>
-              </div>
-            </div>
-          </Card>
         </div>
       </div>
     </div>
