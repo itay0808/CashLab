@@ -43,6 +43,18 @@ export const TransactionsList = () => {
     }
   }, [user]);
 
+  // Function to refresh transactions (can be called from parent)
+  const refreshTransactions = () => {
+    fetchTransactions();
+  };
+
+  // Expose refresh function to parent component
+  useEffect(() => {
+    const handleRefresh = () => refreshTransactions();
+    window.addEventListener('refreshTransactions', handleRefresh);
+    return () => window.removeEventListener('refreshTransactions', handleRefresh);
+  }, []);
+
   const fetchTransactions = async () => {
     try {
       const currentMonth = new Date();

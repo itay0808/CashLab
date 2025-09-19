@@ -146,6 +146,11 @@ export const AddTransactionDialog = ({ open, onOpenChange, onTransactionAdded }:
         title: "Success",
         description: "Transaction added successfully",
       });
+      
+      // Trigger balance and transaction refresh
+      window.dispatchEvent(new CustomEvent('refreshBalances'));
+      window.dispatchEvent(new CustomEvent('refreshTransactions'));
+      
       onTransactionAdded();
       onOpenChange(false);
       (e.target as HTMLFormElement).reset();

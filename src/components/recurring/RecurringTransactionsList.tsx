@@ -6,6 +6,7 @@ import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
+import { ProcessRecurringButton } from "./ProcessRecurringButton";
 
 interface RecurringTransaction {
   id: string;
@@ -116,6 +117,19 @@ export const RecurringTransactionsList = () => {
 
   return (
     <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <div className="p-2 bg-primary/10 rounded-full">
+            <Calendar className="h-5 w-5 text-primary" />
+          </div>
+          <div>
+            <h3 className="text-xl font-semibold">Recurring Transactions</h3>
+            <p className="text-sm text-muted-foreground">Automatic payments and income</p>
+          </div>
+        </div>
+        <ProcessRecurringButton />
+      </div>
+      
       {recurringTransactions.length === 0 ? (
         <Card className="p-8 text-center">
           <Calendar className="h-12 w-12 text-muted-foreground mx-auto mb-4" />

@@ -37,6 +37,18 @@ export const AccountBalance = () => {
     }
   }, [user]);
 
+  // Function to refresh balances (can be called from outside)
+  const refreshBalances = () => {
+    fetchAccountData();
+  };
+
+  // Listen for balance updates
+  useEffect(() => {
+    const handleRefresh = () => refreshBalances();
+    window.addEventListener('refreshBalances', handleRefresh);
+    return () => window.removeEventListener('refreshBalances', handleRefresh);
+  }, []);
+
   const fetchAccountData = async () => {
     try {
       // Fetch main account
