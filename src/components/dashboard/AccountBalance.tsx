@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { SavingsTransferDialog } from "@/components/savings/SavingsTransferDialog";
 
 interface MainAccount {
@@ -30,6 +31,7 @@ export const AccountBalance = () => {
   const [showTransferDialog, setShowTransferDialog] = useState(false);
   const { user } = useAuth();
   const { toast } = useToast();
+  const isMobile = useIsMobile();
   
   useEffect(() => {
     if (user) {
@@ -95,13 +97,13 @@ export const AccountBalance = () => {
   
   if (loading) {
     return (
-      <Card className="p-6 bg-gradient-primary text-white shadow-primary">
+      <Card className="p-4 sm:p-6 bg-gradient-primary text-white shadow-primary">
         <div className="animate-pulse">
           <div className="h-4 bg-white/20 rounded w-1/4 mb-4"></div>
-          <div className="h-8 bg-white/20 rounded w-1/2 mb-6"></div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="h-6 sm:h-8 bg-white/20 rounded w-1/2 mb-4 sm:mb-6"></div>
+          <div className={`grid grid-cols-1 ${isMobile ? 'gap-3' : 'md:grid-cols-2 gap-4'}`}>
             {[1, 2].map((i) => (
-              <div key={i} className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
+              <div key={i} className="bg-white/10 backdrop-blur-sm rounded-lg p-3 sm:p-4">
                 <div className="h-3 bg-white/20 rounded mb-2"></div>
                 <div className="h-4 bg-white/20 rounded"></div>
               </div>
@@ -118,19 +120,19 @@ export const AccountBalance = () => {
     <>
       <Card className="relative overflow-hidden bg-gradient-primary text-primary-foreground shadow-primary border-0">
         <div className="absolute inset-0 opacity-10">
-          <div className="absolute top-0 right-0 w-40 h-40 bg-primary-light rounded-full blur-2xl"></div>
-          <div className="absolute bottom-0 left-0 w-32 h-32 bg-success-light rounded-full blur-2xl"></div>
+          <div className="absolute top-0 right-0 w-32 sm:w-40 h-32 sm:h-40 bg-primary-light rounded-full blur-2xl"></div>
+          <div className="absolute bottom-0 left-0 w-24 sm:w-32 h-24 sm:h-32 bg-success-light rounded-full blur-2xl"></div>
         </div>
         
-        <div className="relative p-6">
-          <div className="flex items-center justify-between mb-8">
+        <div className="relative p-4 sm:p-6">
+          <div className={`flex ${isMobile ? 'flex-col gap-4' : 'items-center justify-between'} mb-6 sm:mb-8`}>
             <div className="space-y-1">
               <div className="flex items-center gap-2 text-primary-foreground/70">
                 <div className="w-2 h-2 bg-primary-foreground rounded-full"></div>
-                <span className="text-sm font-medium uppercase tracking-wide">Total Balance</span>
+                <span className="text-xs sm:text-sm font-medium uppercase tracking-wide">Total Balance</span>
               </div>
-              <div className="flex items-center gap-4">
-                <span className="text-4xl md:text-5xl font-bold tracking-tight">
+              <div className="flex items-center gap-3 sm:gap-4">
+                <span className={`${isMobile ? 'text-2xl' : 'text-4xl md:text-5xl'} font-bold tracking-tight`}>
                   {showBalance ? `₪${totalBalance.toLocaleString('he-IL', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}` : "••••••••"}
                 </span>
                 <Button 
@@ -139,11 +141,11 @@ export const AccountBalance = () => {
                   onClick={() => setShowBalance(!showBalance)}
                   className="text-primary-foreground/80 hover:text-primary-foreground hover:bg-primary-foreground/10 rounded-full"
                 >
-                  {showBalance ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                  {showBalance ? <EyeOff className="h-4 w-4 sm:h-5 sm:w-5" /> : <Eye className="h-4 w-4 sm:h-5 sm:w-5" />}
                 </Button>
               </div>
             </div>
-            <div className="text-right">
+            <div className={`${isMobile ? 'self-start' : 'text-right'}`}>
               <Button
                 onClick={() => setShowTransferDialog(true)}
                 disabled={totalBalance <= 0}
@@ -156,19 +158,19 @@ export const AccountBalance = () => {
             </div>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className={`grid grid-cols-1 ${isMobile ? 'gap-3' : 'md:grid-cols-2 gap-4'}`}>
             {/* Main Account */}
-            <div className="bg-primary-foreground/10 backdrop-blur-sm rounded-2xl p-5 border border-primary-foreground/20">
+            <div className="bg-primary-foreground/10 backdrop-blur-sm rounded-xl sm:rounded-2xl p-4 sm:p-5 border border-primary-foreground/20">
               <div className="flex items-start justify-between mb-3">
                 <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 bg-primary-foreground/20 rounded-full flex items-center justify-center">
-                    <Wallet className="h-4 w-4 text-primary-foreground" />
+                  <div className="w-6 h-6 sm:w-8 sm:h-8 bg-primary-foreground/20 rounded-full flex items-center justify-center">
+                    <Wallet className="h-3 w-3 sm:h-4 sm:w-4 text-primary-foreground" />
                   </div>
-                  <span className="text-sm font-medium text-primary-foreground/90">Main Account</span>
+                  <span className="text-xs sm:text-sm font-medium text-primary-foreground/90">Main Account</span>
                 </div>
               </div>
               <div className="space-y-1">
-                <div className="text-xl font-bold text-primary-foreground">
+                <div className={`${isMobile ? 'text-lg' : 'text-xl'} font-bold text-primary-foreground`}>
                   {showBalance ? `₪${(mainAccount?.balance || 0).toLocaleString('he-IL', { minimumFractionDigits: 0 })}` : "••••••"}
                 </div>
                 <div className="text-xs text-primary-foreground/60 capitalize font-medium">
@@ -178,17 +180,17 @@ export const AccountBalance = () => {
             </div>
 
             {/* Savings Account */}
-            <div className="bg-success/10 backdrop-blur-sm rounded-2xl p-5 border border-success/20">
+            <div className="bg-success/10 backdrop-blur-sm rounded-xl sm:rounded-2xl p-4 sm:p-5 border border-success/20">
               <div className="flex items-start justify-between mb-3">
                 <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 bg-success/20 rounded-full flex items-center justify-center">
-                    <PiggyBank className="h-4 w-4 text-success" />
+                  <div className="w-6 h-6 sm:w-8 sm:h-8 bg-success/20 rounded-full flex items-center justify-center">
+                    <PiggyBank className="h-3 w-3 sm:h-4 sm:w-4 text-success" />
                   </div>
-                  <span className="text-sm font-medium text-primary-foreground/90">Savings Account</span>
+                  <span className="text-xs sm:text-sm font-medium text-primary-foreground/90">Savings Account</span>
                 </div>
               </div>
               <div className="space-y-1">
-                <div className="text-xl font-bold text-primary-foreground">
+                <div className={`${isMobile ? 'text-lg' : 'text-xl'} font-bold text-primary-foreground`}>
                   {showBalance ? `₪${(savingsAccount?.balance || 0).toLocaleString('he-IL', { minimumFractionDigits: 0 })}` : "••••••"}
                 </div>
                 <div className="text-xs text-primary-foreground/60 capitalize font-medium">
