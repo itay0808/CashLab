@@ -70,12 +70,13 @@ export const RecurringTransactionsList = () => {
 
   const handleDeleteRecurring = async (id: string) => {
     try {
-      const { error } = await supabase
+      // First mark as inactive to stop future processing
+      const { error: updateError } = await supabase
         .from('recurring_transactions')
         .update({ is_active: false })
         .eq('id', id);
 
-      if (error) throw error;
+      if (updateError) throw updateError;
 
       toast({
         title: "Success",

@@ -82,7 +82,7 @@ export const AddTransactionDialog = ({ open, onOpenChange, onTransactionAdded }:
 
       if (accountError) throw accountError;
 
-      // Insert transaction
+      // Insert transaction (balance will be updated automatically by trigger)
       const { error } = await supabase
         .from('transactions')
         .insert([{

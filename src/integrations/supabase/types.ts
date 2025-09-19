@@ -679,6 +679,10 @@ export type Database = {
         Args: { user_id_param: string }
         Returns: string
       }
+      process_due_recurring_transactions: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
       process_savings_transfer: {
         Args: {
           amount_param: number

@@ -78,6 +78,30 @@ export const TransactionsList = () => {
     }
   };
 
+  const handleDeleteTransaction = async (transactionId: string) => {
+    try {
+      const { error } = await supabase
+        .from('transactions')
+        .delete()
+        .eq('id', transactionId);
+
+      if (error) throw error;
+
+      toast({
+        title: "Success",
+        description: "Transaction deleted successfully",
+      });
+      
+      fetchTransactions();
+    } catch (error) {
+      toast({
+        title: "Error", 
+        description: "Failed to delete transaction",
+        variant: "destructive",
+      });
+    }
+  };
+
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     const today = new Date();
@@ -191,14 +215,24 @@ export const TransactionsList = () => {
                           {transaction.type}
                         </div>
                       </div>
-                      <div className={`p-2 rounded-full ${
-                        transaction.amount > 0 ? 'bg-success/10' : 'bg-muted/50'
-                      }`}>
-                        {transaction.amount > 0 ? (
-                          <ArrowDownLeft className="h-4 w-4 text-success" />
-                        ) : (
-                          <ArrowUpRight className="h-4 w-4 text-muted-foreground" />
-                        )}
+                      <div className="flex items-center gap-2">
+                        <div className={`p-2 rounded-full ${
+                          transaction.amount > 0 ? 'bg-success/10' : 'bg-muted/50'
+                        }`}>
+                          {transaction.amount > 0 ? (
+                            <ArrowDownLeft className="h-4 w-4 text-success" />
+                          ) : (
+                            <ArrowUpRight className="h-4 w-4 text-muted-foreground" />
+                          )}
+                        </div>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleDeleteTransaction(transaction.id)}
+                          className="opacity-0 group-hover:opacity-100 h-8 w-8 p-0 text-destructive hover:text-destructive hover:bg-destructive/10"
+                        >
+                          ×
+                        </Button>
                       </div>
                     </div>
                   </div>
