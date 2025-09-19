@@ -356,6 +356,13 @@ export const TransactionCalendar = () => {
           </div>
         )}
 
+        {/* Current Month/Year Display */}
+        <div className="text-center py-2 border-b border-border/30">
+          <p className="text-sm text-muted-foreground">
+            Viewing: <span className="font-medium text-foreground">{format(currentDate, 'MMMM yyyy')}</span>
+          </p>
+        </div>
+
         {/* Calendar Grid */}
         <div className="space-y-4">
           {/* Day Headers */}
