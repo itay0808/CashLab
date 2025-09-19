@@ -6,6 +6,7 @@ import { SpendingChart } from "@/components/dashboard/SpendingChart";
 import { SubscriptionsTracker } from "@/components/dashboard/SubscriptionsTracker";
 import { SavingsGoal } from "@/components/dashboard/SavingsGoal";
 import { TransactionsList } from "@/components/dashboard/TransactionsList";
+import { TransactionCalendar } from "@/components/dashboard/TransactionCalendar";
 import { BudgetOverview } from "@/components/budget/BudgetOverview";
 import { CreateBudgetDialog } from "@/components/budget/CreateBudgetDialog";
 import { useState } from "react";
@@ -71,6 +72,11 @@ const Dashboard = () => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
           <SpendingChart key={refreshTrigger} />
           <SubscriptionsTracker key={refreshTrigger} />
+        </div>
+
+        {/* Calendar Section */}
+        <div className="space-y-4">
+          <TransactionCalendar key={refreshTrigger} />
         </div>
 
         {/* Activity Section */}
