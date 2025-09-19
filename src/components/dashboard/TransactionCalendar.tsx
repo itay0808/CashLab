@@ -63,7 +63,9 @@ export const TransactionCalendar = () => {
       const monthStart = startOfMonth(currentDate);
       const monthEnd = endOfMonth(currentDate);
 
-      // Fetch transactions for the current month
+      console.log('Fetching data for:', format(monthStart, 'yyyy-MM-dd'), 'to', format(monthEnd, 'yyyy-MM-dd'));
+
+      // Fetch transactions for the selected month/year
       const { data: transactionsData, error: transactionsError } = await supabase
         .from('transactions')
         .select(`
@@ -79,9 +81,12 @@ export const TransactionCalendar = () => {
         .lte('transaction_date', monthEnd.toISOString())
         .order('transaction_date', { ascending: true });
 
-      if (transactionsError) throw transactionsError;
+      if (transactionsError) {
+        console.error('Transactions error:', transactionsError);
+        throw transactionsError;
+      }
 
-      // Fetch recurring transactions
+      // Fetch ALL recurring transactions (we'll filter them in the calendar generation)
       const { data: recurringData, error: recurringError } = await supabase
         .from('recurring_transactions')
         .select(`
@@ -95,7 +100,13 @@ export const TransactionCalendar = () => {
         .eq('user_id', user?.id)
         .eq('is_active', true);
 
-      if (recurringError) throw recurringError;
+      if (recurringError) {
+        console.error('Recurring error:', recurringError);
+        throw recurringError;
+      }
+
+      console.log('Fetched transactions:', transactionsData?.length || 0);
+      console.log('Fetched recurring:', recurringData?.length || 0);
 
       setTransactions(transactionsData || []);
       setRecurringTransactions(recurringData || []);
@@ -155,9 +166,13 @@ export const TransactionCalendar = () => {
     const dates: Date[] = [];
     let currentDate = new Date(recurring.next_due_date);
     
-    // Generate dates for the entire month
+    // Go back a year from the current month to catch any recurring transactions that should show
+    const searchStart = new Date(monthStart);
+    searchStart.setFullYear(searchStart.getFullYear() - 1);
+    
+    // Start from the recurring transaction's original due date and work forward
     while (currentDate <= monthEnd) {
-      if (currentDate >= monthStart) {
+      if (currentDate >= monthStart && currentDate <= monthEnd) {
         dates.push(new Date(currentDate));
       }
       
@@ -184,6 +199,9 @@ export const TransactionCalendar = () => {
         default:
           return dates; // Stop if unknown frequency
       }
+      
+      // Prevent infinite loops
+      if (dates.length > 100) break;
     }
     
     return dates;
@@ -205,9 +223,13 @@ export const TransactionCalendar = () => {
   };
 
   const generateYearOptions = () => {
+    const currentYear = getYear(new Date());
     const years = [];
-    for (let year = 2000; year <= 9999; year++) {
-      years.push(year);
+    // Show 10 years before and 10 years after current year
+    for (let year = currentYear - 10; year <= currentYear + 10; year++) {
+      if (year >= 2000 && year <= 9999) {
+        years.push(year);
+      }
     }
     return years;
   };
@@ -270,14 +292,15 @@ export const TransactionCalendar = () => {
 
         {/* Year Picker */}
         {showYearPicker && (
-          <div className="absolute z-10 bg-card border rounded-lg shadow-lg p-4 max-h-48 overflow-y-auto">
+          <div className="absolute z-10 bg-card border rounded-lg shadow-lg p-4 max-h-48 overflow-y-auto right-0 top-16">
             <div className="grid grid-cols-4 gap-2">
-              {generateYearOptions().slice(getYear(new Date()) - 10, getYear(new Date()) + 10).map(year => (
+              {generateYearOptions().map(year => (
                 <Button
                   key={year}
                   variant={getYear(currentDate) === year ? "default" : "ghost"}
                   size="sm"
                   onClick={() => navigateToYear(year)}
+                  className="text-sm"
                 >
                   {year}
                 </Button>
