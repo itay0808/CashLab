@@ -101,6 +101,7 @@ export const SavingsTransferDialog = ({
   };
 
   const maxAmount = transferType === 'to_savings' ? mainBalance : savingsBalance;
+  const canTransfer = maxAmount > 0;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -123,8 +124,20 @@ export const SavingsTransferDialog = ({
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="to_savings">Main Account → Savings Account</SelectItem>
-                <SelectItem value="from_savings">Savings Account → Main Account</SelectItem>
+                <SelectItem 
+                  value="to_savings" 
+                  disabled={mainBalance <= 0}
+                >
+                  Main Account → Savings Account
+                  {mainBalance <= 0 && <span className="text-muted-foreground ml-2">(No funds)</span>}
+                </SelectItem>
+                <SelectItem 
+                  value="from_savings"
+                  disabled={savingsBalance <= 0}
+                >
+                  Savings Account → Main Account
+                  {savingsBalance <= 0 && <span className="text-muted-foreground ml-2">(No funds)</span>}
+                </SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -149,6 +162,7 @@ export const SavingsTransferDialog = ({
             </div>
             <p className="text-xs text-muted-foreground">
               Available: ₪{maxAmount.toLocaleString('he-IL', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
+              {!canTransfer && <span className="text-danger ml-2">• No funds available for transfer</span>}
             </p>
           </div>
 
@@ -166,8 +180,8 @@ export const SavingsTransferDialog = ({
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)} className="flex-1">
               Cancel
             </Button>
-            <Button type="submit" disabled={loading} className="flex-1">
-              {loading ? 'Processing...' : 'Transfer'}
+            <Button type="submit" disabled={loading || !canTransfer} className="flex-1">
+              {loading ? 'Processing...' : !canTransfer ? 'No Funds Available' : 'Transfer'}
             </Button>
           </div>
         </form>
