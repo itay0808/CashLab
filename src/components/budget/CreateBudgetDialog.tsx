@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -7,6 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Slider } from '@/components/ui/slider';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface Category {
   id: string;
@@ -25,6 +26,7 @@ export const CreateBudgetDialog = ({ open, onOpenChange, onBudgetCreated }: Crea
   const [categories, setCategories] = useState<Category[]>([]);
   const [alertThreshold, setAlertThreshold] = useState([80]);
   const { toast } = useToast();
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     if (open) {
@@ -145,13 +147,13 @@ export const CreateBudgetDialog = ({ open, onOpenChange, onBudgetCreated }: Crea
   };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md">
-        <DialogHeader>
-          <DialogTitle>Create Budget</DialogTitle>
-        </DialogHeader>
+    <Sheet open={open} onOpenChange={onOpenChange}>
+      <SheetContent className="w-full sm:max-w-md overflow-y-auto">
+        <SheetHeader>
+          <SheetTitle>Create Budget</SheetTitle>
+        </SheetHeader>
         
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-6 pt-4">
           <div className="space-y-2">
             <Label htmlFor="name">Budget Name</Label>
             <Input
@@ -233,16 +235,16 @@ export const CreateBudgetDialog = ({ open, onOpenChange, onBudgetCreated }: Crea
             </p>
           </div>
 
-          <div className="flex gap-3">
-            <Button type="button" variant="outline" onClick={() => onOpenChange(false)} className="flex-1">
-              Cancel
-            </Button>
-            <Button type="submit" disabled={loading} className="flex-1">
+          <div className="flex flex-col gap-3 pt-4">
+            <Button type="submit" disabled={loading} size="lg">
               {loading ? 'Creating...' : 'Create Budget'}
+            </Button>
+            <Button type="button" variant="outline" onClick={() => onOpenChange(false)} size="lg">
+              Cancel
             </Button>
           </div>
         </form>
-      </DialogContent>
-    </Dialog>
+      </SheetContent>
+    </Sheet>
   );
 };

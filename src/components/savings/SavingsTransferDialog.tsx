@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -7,6 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { ArrowUpDown } from 'lucide-react';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface SavingsTransferDialogProps {
   open: boolean;
@@ -28,6 +29,7 @@ export const SavingsTransferDialog = ({
   const [amount, setAmount] = useState('');
   const [description, setDescription] = useState('');
   const { toast } = useToast();
+  const isMobile = useIsMobile();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -104,16 +106,16 @@ export const SavingsTransferDialog = ({
   const canTransfer = maxAmount > 0;
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md">
-        <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
+    <Sheet open={open} onOpenChange={onOpenChange}>
+      <SheetContent className="w-full sm:max-w-md">
+        <SheetHeader>
+          <SheetTitle className="flex items-center gap-2">
             <ArrowUpDown className="h-5 w-5" />
             Transfer Funds
-          </DialogTitle>
-        </DialogHeader>
+          </SheetTitle>
+        </SheetHeader>
         
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-6 pt-4">
           <div className="space-y-2">
             <Label htmlFor="transferType">Transfer Direction</Label>
             <Select 
@@ -128,14 +130,14 @@ export const SavingsTransferDialog = ({
                   value="to_savings" 
                   disabled={mainBalance <= 0}
                 >
-                  Main Account → Savings Account
+                  Main → Savings
                   {mainBalance <= 0 && <span className="text-muted-foreground ml-2">(No funds)</span>}
                 </SelectItem>
                 <SelectItem 
                   value="from_savings"
                   disabled={savingsBalance <= 0}
                 >
-                  Savings Account → Main Account
+                  Savings → Main
                   {savingsBalance <= 0 && <span className="text-muted-foreground ml-2">(No funds)</span>}
                 </SelectItem>
               </SelectContent>
@@ -162,12 +164,12 @@ export const SavingsTransferDialog = ({
             </div>
             <p className="text-xs text-muted-foreground">
               Available: ₪{maxAmount.toLocaleString('he-IL', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
-              {!canTransfer && <span className="text-danger ml-2">• No funds available for transfer</span>}
+              {!canTransfer && <span className="text-destructive ml-2">• No funds available</span>}
             </p>
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="description">Description (optional)</Label>
+            <Label htmlFor="description">Description</Label>
             <Input
               id="description"
               placeholder="What is this transfer for?"
@@ -176,16 +178,16 @@ export const SavingsTransferDialog = ({
             />
           </div>
 
-          <div className="flex gap-3">
-            <Button type="button" variant="outline" onClick={() => onOpenChange(false)} className="flex-1">
-              Cancel
-            </Button>
-            <Button type="submit" disabled={loading || !canTransfer} className="flex-1">
+          <div className="flex flex-col gap-3 pt-4">
+            <Button type="submit" disabled={loading || !canTransfer} size="lg">
               {loading ? 'Processing...' : !canTransfer ? 'No Funds Available' : 'Transfer'}
+            </Button>
+            <Button type="button" variant="outline" onClick={() => onOpenChange(false)} size="lg">
+              Cancel
             </Button>
           </div>
         </form>
-      </DialogContent>
-    </Dialog>
+      </SheetContent>
+    </Sheet>
   );
 };

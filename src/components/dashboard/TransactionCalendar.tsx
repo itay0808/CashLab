@@ -284,12 +284,12 @@ export const TransactionCalendar = () => {
           </div>
           
           {/* Navigation */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 relative">
             <Button variant="outline" size="sm" onClick={() => navigateMonth('prev')}>
               <ChevronLeft className="h-4 w-4" />
             </Button>
             
-            <div className="flex items-center gap-1">
+            <div className="flex items-center gap-1 relative">
               <Button
                 variant="outline"
                 className="min-w-[120px] font-semibold"
@@ -310,6 +310,44 @@ export const TransactionCalendar = () => {
               >
                 {format(currentDate, 'yyyy')}
               </Button>
+
+              {/* Month Picker */}
+              {showMonthPicker && (
+                <div className="absolute z-50 bg-card border rounded-lg shadow-lg p-4 max-h-48 overflow-y-auto right-0 top-full mt-2">
+                  <div className="grid grid-cols-3 gap-2">
+                    {generateMonthOptions().map((month, index) => (
+                      <Button
+                        key={month}
+                        variant={getMonth(currentDate) === index ? "default" : "ghost"}
+                        size="sm"
+                        onClick={() => navigateToMonth(index)}
+                        className="text-sm"
+                      >
+                        {month.slice(0, 3)}
+                      </Button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Year Picker */}
+              {showYearPicker && (
+                <div className="absolute z-50 bg-card border rounded-lg shadow-lg p-4 max-h-48 overflow-y-auto right-0 top-full mt-2">
+                  <div className="grid grid-cols-4 gap-2">
+                    {generateYearOptions().map(year => (
+                      <Button
+                        key={year}
+                        variant={getYear(currentDate) === year ? "default" : "ghost"}
+                        size="sm"
+                        onClick={() => navigateToYear(year)}
+                        className="text-sm"
+                      >
+                        {year}
+                      </Button>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
             
             <Button variant="outline" size="sm" onClick={() => navigateMonth('next')}>
@@ -318,43 +356,6 @@ export const TransactionCalendar = () => {
           </div>
         </div>
 
-        {/* Month Picker */}
-        {showMonthPicker && (
-          <div className="absolute z-10 bg-card border rounded-lg shadow-lg p-4 max-h-48 overflow-y-auto right-0 top-16">
-            <div className="grid grid-cols-3 gap-2">
-              {generateMonthOptions().map((month, index) => (
-                <Button
-                  key={month}
-                  variant={getMonth(currentDate) === index ? "default" : "ghost"}
-                  size="sm"
-                  onClick={() => navigateToMonth(index)}
-                  className="text-sm"
-                >
-                  {month.slice(0, 3)}
-                </Button>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Year Picker */}
-        {showYearPicker && (
-          <div className="absolute z-10 bg-card border rounded-lg shadow-lg p-4 max-h-48 overflow-y-auto right-0 top-16">
-            <div className="grid grid-cols-4 gap-2">
-              {generateYearOptions().map(year => (
-                <Button
-                  key={year}
-                  variant={getYear(currentDate) === year ? "default" : "ghost"}
-                  size="sm"
-                  onClick={() => navigateToYear(year)}
-                  className="text-sm"
-                >
-                  {year}
-                </Button>
-              ))}
-            </div>
-          </div>
-        )}
 
         {/* Current Month/Year Display */}
         <div className="text-center py-2 border-b border-border/30">

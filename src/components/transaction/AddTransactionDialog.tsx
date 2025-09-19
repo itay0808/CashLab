@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -7,6 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Textarea } from '@/components/ui/textarea';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface Category {
   id: string;
@@ -25,6 +26,7 @@ export const AddTransactionDialog = ({ open, onOpenChange, onTransactionAdded }:
   const [loading, setLoading] = useState(false);
   const [categories, setCategories] = useState<Category[]>([]);
   const { toast } = useToast();
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     if (open) {
@@ -161,13 +163,13 @@ export const AddTransactionDialog = ({ open, onOpenChange, onTransactionAdded }:
   };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md">
-        <DialogHeader>
-          <DialogTitle>Add Transaction</DialogTitle>
-        </DialogHeader>
+    <Sheet open={open} onOpenChange={onOpenChange}>
+      <SheetContent className="w-full sm:max-w-md overflow-y-auto">
+        <SheetHeader>
+          <SheetTitle>Add Transaction</SheetTitle>
+        </SheetHeader>
         
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-4 pt-4">
           <div className="space-y-2">
             <Label htmlFor="type">Type</Label>
             <Select name="type" defaultValue="expense" required>
@@ -205,7 +207,7 @@ export const AddTransactionDialog = ({ open, onOpenChange, onTransactionAdded }:
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="category">Category (optional)</Label>
+            <Label htmlFor="category">Category</Label>
             <Select name="category">
               <SelectTrigger>
                 <SelectValue placeholder="Select category" />
@@ -234,7 +236,7 @@ export const AddTransactionDialog = ({ open, onOpenChange, onTransactionAdded }:
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="notes">Notes (optional)</Label>
+            <Label htmlFor="notes">Notes</Label>
             <Textarea
               id="notes"
               name="notes"
@@ -262,7 +264,7 @@ export const AddTransactionDialog = ({ open, onOpenChange, onTransactionAdded }:
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="recurringEnd">Recurring End (optional)</Label>
+            <Label htmlFor="recurringEnd">Recurring End</Label>
             <Input
               id="recurringEnd"
               name="recurringEnd"
@@ -271,16 +273,16 @@ export const AddTransactionDialog = ({ open, onOpenChange, onTransactionAdded }:
             />
           </div>
 
-          <div className="flex gap-3">
-            <Button type="button" variant="outline" onClick={() => onOpenChange(false)} className="flex-1">
-              Cancel
-            </Button>
-            <Button type="submit" disabled={loading} className="flex-1">
+          <div className="flex flex-col gap-3 pt-4">
+            <Button type="submit" disabled={loading} size="lg">
               {loading ? 'Adding...' : 'Add Transaction'}
+            </Button>
+            <Button type="button" variant="outline" onClick={() => onOpenChange(false)} size="lg">
+              Cancel
             </Button>
           </div>
         </form>
-      </DialogContent>
-    </Dialog>
+      </SheetContent>
+    </Sheet>
   );
 };

@@ -1,9 +1,10 @@
 import { useState } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { BudgetOverview } from './BudgetOverview';
 import { BudgetAnalytics } from './BudgetAnalytics';
 import { CreateBudgetDialog } from './CreateBudgetDialog';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface BudgetManagementDialogProps {
   open: boolean;
@@ -14,6 +15,7 @@ interface BudgetManagementDialogProps {
 export const BudgetManagementDialog = ({ open, onOpenChange, onBudgetChange }: BudgetManagementDialogProps) => {
   const [showCreateBudget, setShowCreateBudget] = useState(false);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
+  const isMobile = useIsMobile();
 
   const handleBudgetCreated = () => {
     setRefreshTrigger(prev => prev + 1);
@@ -22,15 +24,15 @@ export const BudgetManagementDialog = ({ open, onOpenChange, onBudgetChange }: B
 
   return (
     <>
-      <Dialog open={open} onOpenChange={onOpenChange}>
-        <DialogContent className="sm:max-w-4xl h-[90vh] overflow-hidden flex flex-col">
-          <DialogHeader>
-            <DialogTitle>Budget Management</DialogTitle>
-          </DialogHeader>
+      <Sheet open={open} onOpenChange={onOpenChange}>
+        <SheetContent className="w-full sm:max-w-4xl h-full max-h-screen overflow-hidden flex flex-col">
+          <SheetHeader>
+            <SheetTitle>Budget Management</SheetTitle>
+          </SheetHeader>
           
           <Tabs defaultValue="overview" className="flex-1 overflow-hidden">
             <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="overview">Budget Overview</TabsTrigger>
+              <TabsTrigger value="overview">Overview</TabsTrigger>
               <TabsTrigger value="analytics">Analytics</TabsTrigger>
             </TabsList>
             
@@ -47,8 +49,8 @@ export const BudgetManagementDialog = ({ open, onOpenChange, onBudgetChange }: B
               </TabsContent>
             </div>
           </Tabs>
-        </DialogContent>
-      </Dialog>
+        </SheetContent>
+      </Sheet>
 
       <CreateBudgetDialog
         open={showCreateBudget}

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -12,6 +12,7 @@ import { format } from "date-fns";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface AddInvestmentDialogProps {
   onInvestmentAdded?: () => void;
@@ -30,6 +31,7 @@ export const AddInvestmentDialog = ({ onInvestmentAdded }: AddInvestmentDialogPr
   const [notes, setNotes] = useState("");
   const { toast } = useToast();
   const { user } = useAuth();
+  const isMobile = useIsMobile();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -101,25 +103,22 @@ export const AddInvestmentDialog = ({ onInvestmentAdded }: AddInvestmentDialogPr
   };
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
+    <Sheet open={open} onOpenChange={setOpen}>
+      <SheetTrigger asChild>
         <Button className="gap-2">
           <Plus className="h-4 w-4" />
           Add Investment
         </Button>
-      </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px] max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
+      </SheetTrigger>
+      <SheetContent className="w-full sm:max-w-md overflow-y-auto">
+        <SheetHeader>
+          <SheetTitle className="flex items-center gap-2">
             <TrendingUp className="h-5 w-5" />
             Add Investment
-          </DialogTitle>
-          <DialogDescription>
-            Add a new investment to track its performance in your portfolio.
-          </DialogDescription>
-        </DialogHeader>
+          </SheetTitle>
+        </SheetHeader>
         
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-6 pt-4">
           <div>
             <Label htmlFor="name">Investment Name *</Label>
             <Input
@@ -208,6 +207,7 @@ export const AddInvestmentDialog = ({ onInvestmentAdded }: AddInvestmentDialogPr
                   onSelect={setPurchaseDate}
                   initialFocus
                   disabled={(date) => date > new Date()}
+                  className="pointer-events-auto"
                 />
               </PopoverContent>
             </Popover>
@@ -237,16 +237,16 @@ export const AddInvestmentDialog = ({ onInvestmentAdded }: AddInvestmentDialogPr
             />
           </div>
 
-          <DialogFooter>
-            <Button type="button" variant="outline" onClick={() => setOpen(false)}>
-              Cancel
-            </Button>
-            <Button type="submit" disabled={loading}>
+          <div className="flex flex-col gap-3 pt-4">
+            <Button type="submit" disabled={loading} size="lg">
               {loading ? "Adding..." : "Add Investment"}
             </Button>
-          </DialogFooter>
+            <Button type="button" variant="outline" onClick={() => setOpen(false)} size="lg">
+              Cancel
+            </Button>
+          </div>
         </form>
-      </DialogContent>
-    </Dialog>
+      </SheetContent>
+    </Sheet>
   );
 };
