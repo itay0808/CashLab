@@ -49,6 +49,11 @@ const Dashboard = () => {
           </div>
         </div>
 
+        {/* Main Calendar Section - Featured */}
+        <div className="space-y-4">
+          <TransactionCalendar key={refreshTrigger} />
+        </div>
+
         {/* Financial Overview Row */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6">
           <div className="lg:col-span-2">
@@ -74,12 +79,7 @@ const Dashboard = () => {
           <SubscriptionsTracker key={refreshTrigger} />
         </div>
 
-        {/* Calendar Section */}
-        <div className="space-y-4">
-          <TransactionCalendar key={refreshTrigger} />
-        </div>
-
-        {/* Activity Section */}
+        {/* Recent Activity Section */}
         <div className="space-y-4">
           <TransactionsList key={refreshTrigger} />
         </div>
