@@ -10,6 +10,7 @@ import Auth from "./pages/Auth";
 import Budgets from "./pages/Budgets";
 import Transactions from "./pages/Transactions";
 import { Settings } from "./pages/Settings";
+import { EditProfile } from "./pages/EditProfile";
 import { Logs } from "./pages/Logs";
 import NotFound from "./pages/NotFound";
 
@@ -29,6 +30,7 @@ const App = () => (
               <Route path="/transactions" element={<Transactions />} />
               <Route path="/budgets" element={<Budgets />} />
               <Route path="/settings" element={<Settings />} />
+              <Route path="/edit-profile" element={<EditProfile />} />
               <Route path="/logs" element={<Logs />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
