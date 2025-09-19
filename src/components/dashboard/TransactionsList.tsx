@@ -14,9 +14,9 @@ interface Transaction {
   amount: number;
   transaction_date: string;
   type: string;
-  account: {
+  account?: {
     name: string;
-  };
+  } | null;
   category?: {
     name: string;
     icon: string;
@@ -171,7 +171,7 @@ export const TransactionsList = () => {
                           <span>{formatDate(transaction.transaction_date)}</span>
                           <div className="flex items-center gap-1">
                             <div className="w-1 h-1 bg-muted-foreground/50 rounded-full"></div>
-                            <span>{transaction.account.name}</span>
+                            <span>{transaction.description}</span>
                           </div>
                           <Badge variant="secondary" className="text-xs bg-muted/50">
                             {transaction.category?.name || 'Uncategorized'}

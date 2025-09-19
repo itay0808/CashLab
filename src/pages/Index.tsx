@@ -7,7 +7,6 @@ import { TransactionsList } from "@/components/dashboard/TransactionsList";
 import { SubscriptionsTracker } from "@/components/dashboard/SubscriptionsTracker";
 import { SpendingChart } from "@/components/dashboard/SpendingChart";
 import { AddTransactionDialog } from "@/components/transaction/AddTransactionDialog";
-import { AddAccountDialog } from "@/components/account/AddAccountDialog";
 import { BudgetManagementDialog } from "@/components/budget/BudgetManagementDialog";
 import { Button } from "@/components/ui/button";
 import { Plus, Calculator } from "lucide-react";
@@ -15,7 +14,6 @@ import { Plus, Calculator } from "lucide-react";
 const Index = () => {
   const { user, loading } = useAuth();
   const [showAddTransaction, setShowAddTransaction] = useState(false);
-  const [showAddAccount, setShowAddAccount] = useState(false);
   const [showBudgetManagement, setShowBudgetManagement] = useState(false);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
 
@@ -51,14 +49,6 @@ const Index = () => {
           </Button>
           <Button 
             variant="outline" 
-            onClick={() => setShowAddAccount(true)}
-            className="flex items-center gap-2"
-          >
-            <Plus className="h-4 w-4" />
-            Add Account
-          </Button>
-          <Button 
-            variant="outline" 
             onClick={() => setShowBudgetManagement(true)}
             className="flex items-center gap-2"
           >
@@ -89,12 +79,6 @@ const Index = () => {
         open={showAddTransaction}
         onOpenChange={setShowAddTransaction}
         onTransactionAdded={handleDataRefresh}
-      />
-
-      <AddAccountDialog
-        open={showAddAccount}
-        onOpenChange={setShowAddAccount}
-        onAccountAdded={handleDataRefresh}
       />
 
       <BudgetManagementDialog

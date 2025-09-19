@@ -23,7 +23,6 @@ import {
 
 const navigation = [
   { name: "Dashboard", href: "/", icon: Home },
-  { name: "Accounts", href: "/accounts", icon: CreditCard },
   { name: "Transactions", href: "/transactions", icon: Receipt },
   { name: "Budgets", href: "/budgets", icon: Calculator },
 ];

@@ -15,12 +15,6 @@ interface Category {
   color: string;
 }
 
-interface Account {
-  id: string;
-  name: string;
-  type: string;
-}
-
 interface AddTransactionDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -30,13 +24,11 @@ interface AddTransactionDialogProps {
 export const AddTransactionDialog = ({ open, onOpenChange, onTransactionAdded }: AddTransactionDialogProps) => {
   const [loading, setLoading] = useState(false);
   const [categories, setCategories] = useState<Category[]>([]);
-  const [accounts, setAccounts] = useState<Account[]>([]);
   const { toast } = useToast();
 
   useEffect(() => {
     if (open) {
       fetchCategories();
-      fetchAccounts();
     }
   }, [open]);
 
@@ -58,25 +50,6 @@ export const AddTransactionDialog = ({ open, onOpenChange, onTransactionAdded }:
     setCategories(data || []);
   };
 
-  const fetchAccounts = async () => {
-    const { data, error } = await supabase
-      .from('accounts')
-      .select('*')
-      .eq('is_active', true)
-      .order('name');
-    
-    if (error) {
-      toast({
-        title: "Error",
-        description: "Failed to load accounts",
-        variant: "destructive",
-      });
-      return;
-    }
-    
-    setAccounts(data || []);
-  };
-
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
@@ -86,77 +59,87 @@ export const AddTransactionDialog = ({ open, onOpenChange, onTransactionAdded }:
     const description = formData.get('description') as string;
     const notes = formData.get('notes') as string;
     const categoryId = formData.get('category') as string;
-    const accountId = formData.get('account') as string;
     const type = formData.get('type') as string;
     const transactionDate = formData.get('date') as string;
 
     const recurring = formData.get('recurring') as string;
     const recurringEnd = formData.get('recurringEnd') as string;
-    const userId = (await supabase.auth.getUser()).data.user?.id;
 
-    // Insert transaction
-    const { error } = await supabase
-      .from('transactions')
-      .insert([{
-        amount: type === 'expense' ? -Math.abs(amount) : Math.abs(amount),
-        description,
-        notes: notes || null,
-        category_id: categoryId || null,
-        account_id: accountId,
-        type,
-        transaction_date: transactionDate,
-        user_id: userId,
-        is_recurring: recurring !== 'no',
-      }]);
+    try {
+      const { data: user } = await supabase.auth.getUser();
+      if (!user.user) throw new Error('Not authenticated');
 
-    // If recurring, also create recurring transaction
-    if (recurring !== 'no' && !error) {
-      const nextDueDate = new Date(transactionDate);
-      switch (recurring) {
-        case 'daily':
-          nextDueDate.setDate(nextDueDate.getDate() + 1);
-          break;
-        case 'weekly':
-          nextDueDate.setDate(nextDueDate.getDate() + 7);
-          break;
-        case 'biweekly':
-          nextDueDate.setDate(nextDueDate.getDate() + 14);
-          break;
-        case 'monthly':
-          nextDueDate.setMonth(nextDueDate.getMonth() + 1);
-          break;
-        case 'quarterly':
-          nextDueDate.setMonth(nextDueDate.getMonth() + 3);
-          break;
-        case 'yearly':
-          nextDueDate.setFullYear(nextDueDate.getFullYear() + 1);
-          break;
+      // Get the user's main account
+      const { data: mainAccount, error: accountError } = await supabase
+        .from('accounts')
+        .select('id')
+        .eq('user_id', user.user.id)
+        .eq('type', 'checking')
+        .eq('is_active', true)
+        .single();
+
+      if (accountError) throw accountError;
+
+      // Insert transaction
+      const { error } = await supabase
+        .from('transactions')
+        .insert([{
+          amount: type === 'expense' ? -Math.abs(amount) : Math.abs(amount),
+          description,
+          notes: notes || null,
+          category_id: categoryId || null,
+          account_id: mainAccount.id,
+          type,
+          transaction_date: transactionDate,
+          user_id: user.user.id,
+          is_recurring: recurring !== 'no',
+        }]);
+
+      // If recurring, also create recurring transaction
+      if (recurring !== 'no' && !error) {
+        const nextDueDate = new Date(transactionDate);
+        switch (recurring) {
+          case 'daily':
+            nextDueDate.setDate(nextDueDate.getDate() + 1);
+            break;
+          case 'weekly':
+            nextDueDate.setDate(nextDueDate.getDate() + 7);
+            break;
+          case 'biweekly':
+            nextDueDate.setDate(nextDueDate.getDate() + 14);
+            break;
+          case 'monthly':
+            nextDueDate.setMonth(nextDueDate.getMonth() + 1);
+            break;
+          case 'quarterly':
+            nextDueDate.setMonth(nextDueDate.getMonth() + 3);
+            break;
+          case 'yearly':
+            nextDueDate.setFullYear(nextDueDate.getFullYear() + 1);
+            break;
+        }
+
+        await supabase
+          .from('recurring_transactions')
+          .insert([{
+            name: description,
+            amount: type === 'expense' ? -Math.abs(amount) : Math.abs(amount),
+            type,
+            frequency: recurring,
+            start_date: transactionDate,
+            end_date: recurringEnd || null,
+            next_due_date: nextDueDate.toISOString().split('T')[0],
+            account_id: mainAccount.id,
+            category_id: categoryId || null,
+            notes: notes || null,
+            user_id: user.user.id,
+          }]);
       }
 
-      await supabase
-        .from('recurring_transactions')
-        .insert([{
-          name: description,
-          amount: type === 'expense' ? -Math.abs(amount) : Math.abs(amount),
-          type,
-          frequency: recurring,
-          start_date: transactionDate,
-          end_date: recurringEnd || null,
-          next_due_date: nextDueDate.toISOString().split('T')[0],
-          account_id: accountId,
-          category_id: categoryId || null,
-          notes: notes || null,
-          user_id: userId,
-        }]);
-    }
+      if (error) {
+        throw error;
+      }
 
-    if (error) {
-      toast({
-        title: "Error",
-        description: "Failed to add transaction",
-        variant: "destructive",
-      });
-    } else {
       toast({
         title: "Success",
         description: "Transaction added successfully",
@@ -164,9 +147,17 @@ export const AddTransactionDialog = ({ open, onOpenChange, onTransactionAdded }:
       onTransactionAdded();
       onOpenChange(false);
       (e.target as HTMLFormElement).reset();
-    }
 
-    setLoading(false);
+    } catch (error) {
+      console.error('Transaction error:', error);
+      toast({
+        title: "Error",
+        description: "Failed to add transaction",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -211,22 +202,6 @@ export const AddTransactionDialog = ({ open, onOpenChange, onTransactionAdded }:
               placeholder="What was this for?"
               required
             />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="account">Account</Label>
-            <Select name="account" required>
-              <SelectTrigger>
-                <SelectValue placeholder="Select account" />
-              </SelectTrigger>
-              <SelectContent>
-                {accounts.map((account) => (
-                  <SelectItem key={account.id} value={account.id}>
-                    {account.name} ({account.type})
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
           </div>
 
           <div className="space-y-2">
