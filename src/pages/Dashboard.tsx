@@ -4,9 +4,8 @@ import { Navigation } from "@/components/navigation/Navigation";
 import { AccountBalance } from "@/components/dashboard/AccountBalance";
 import { SpendingChart } from "@/components/dashboard/SpendingChart";
 import { SubscriptionsTracker } from "@/components/dashboard/SubscriptionsTracker";
-import { Clock } from "@/components/dashboard/Clock";
+import { CalendarWithClock } from "@/components/dashboard/CalendarWithClock";
 import { TransactionsList } from "@/components/dashboard/TransactionsList";
-import { TransactionCalendar } from "@/components/dashboard/TransactionCalendar";
 import { BudgetOverview } from "@/components/budget/BudgetOverview";
 import { CreateBudgetDialog } from "@/components/budget/CreateBudgetDialog";
 import { useState } from "react";
@@ -54,9 +53,9 @@ const Dashboard = () => {
           <AccountBalance key={refreshTrigger} />
         </div>
 
-        {/* Main Calendar Section - Featured */}
+        {/* Main Calendar Section with integrated Clock - Featured */}
         <div className="space-y-4">
-          <TransactionCalendar key={refreshTrigger} />
+          <CalendarWithClock key={refreshTrigger} />
         </div>
 
         {/* Budget Section */}
@@ -71,10 +70,7 @@ const Dashboard = () => {
         {/* Analytics Row */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
           <SpendingChart key={refreshTrigger} />
-          <div className="space-y-4">
-            <Clock />
-            <SubscriptionsTracker key={refreshTrigger} />
-          </div>
+          <SubscriptionsTracker key={refreshTrigger} />
         </div>
 
         {/* Recent Activity Section */}
