@@ -6,7 +6,7 @@ import { ChevronLeft, ChevronRight, Calendar, Clock, DollarSign, Repeat } from "
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
-import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameDay, isSameMonth, addMonths, subMonths, setYear, getYear, startOfDay, endOfDay } from "date-fns";
+import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameDay, isSameMonth, addMonths, subMonths, setYear, getYear, setMonth, getMonth, startOfDay, endOfDay } from "date-fns";
 
 interface Transaction {
   id: string;
@@ -48,6 +48,7 @@ export const TransactionCalendar = () => {
   const [recurringTransactions, setRecurringTransactions] = useState<RecurringTransaction[]>([]);
   const [loading, setLoading] = useState(true);
   const [showYearPicker, setShowYearPicker] = useState(false);
+  const [showMonthPicker, setShowMonthPicker] = useState(false);
   const { user } = useAuth();
   const { toast } = useToast();
 
@@ -222,6 +223,11 @@ export const TransactionCalendar = () => {
     setShowYearPicker(false);
   };
 
+  const navigateToMonth = (month: number) => {
+    setCurrentDate(prev => setMonth(prev, month));
+    setShowMonthPicker(false);
+  };
+
   const generateYearOptions = () => {
     const currentYear = getYear(new Date());
     const years = [];
@@ -232,6 +238,13 @@ export const TransactionCalendar = () => {
       }
     }
     return years;
+  };
+
+  const generateMonthOptions = () => {
+    return [
+      'January', 'February', 'March', 'April', 'May', 'June',
+      'July', 'August', 'September', 'October', 'November', 'December'
+    ];
   };
 
   const formatCurrency = (amount: number) => {
@@ -276,19 +289,53 @@ export const TransactionCalendar = () => {
               <ChevronLeft className="h-4 w-4" />
             </Button>
             
-            <Button
-              variant="outline"
-              className="min-w-[140px] font-semibold"
-              onClick={() => setShowYearPicker(!showYearPicker)}
-            >
-              {format(currentDate, 'MMMM yyyy')}
-            </Button>
+            <div className="flex items-center gap-1">
+              <Button
+                variant="outline"
+                className="min-w-[120px] font-semibold"
+                onClick={() => {
+                  setShowMonthPicker(!showMonthPicker);
+                  setShowYearPicker(false);
+                }}
+              >
+                {format(currentDate, 'MMMM')}
+              </Button>
+              <Button
+                variant="outline"
+                className="min-w-[80px] font-semibold"
+                onClick={() => {
+                  setShowYearPicker(!showYearPicker);
+                  setShowMonthPicker(false);
+                }}
+              >
+                {format(currentDate, 'yyyy')}
+              </Button>
+            </div>
             
             <Button variant="outline" size="sm" onClick={() => navigateMonth('next')}>
               <ChevronRight className="h-4 w-4" />
             </Button>
           </div>
         </div>
+
+        {/* Month Picker */}
+        {showMonthPicker && (
+          <div className="absolute z-10 bg-card border rounded-lg shadow-lg p-4 max-h-48 overflow-y-auto right-0 top-16">
+            <div className="grid grid-cols-3 gap-2">
+              {generateMonthOptions().map((month, index) => (
+                <Button
+                  key={month}
+                  variant={getMonth(currentDate) === index ? "default" : "ghost"}
+                  size="sm"
+                  onClick={() => navigateToMonth(index)}
+                  className="text-sm"
+                >
+                  {month.slice(0, 3)}
+                </Button>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Year Picker */}
         {showYearPicker && (

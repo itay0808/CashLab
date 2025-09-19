@@ -6,6 +6,7 @@ import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
+import { startOfMonth, endOfMonth } from "date-fns";
 
 interface Transaction {
   id: string;
@@ -44,6 +45,10 @@ export const TransactionsList = () => {
 
   const fetchTransactions = async () => {
     try {
+      const currentMonth = new Date();
+      const monthStart = startOfMonth(currentMonth);
+      const monthEnd = endOfMonth(currentMonth);
+
       const { data, error } = await supabase
         .from('transactions')
         .select(`
@@ -55,8 +60,10 @@ export const TransactionsList = () => {
           account:accounts(name),
           category:categories(name, icon)
         `)
+        .gte('transaction_date', monthStart.toISOString())
+        .lte('transaction_date', monthEnd.toISOString())
         .order('transaction_date', { ascending: false })
-        .limit(5);
+        .limit(10);
 
       if (error) throw error;
       setTransactions(data || []);
@@ -120,8 +127,8 @@ export const TransactionsList = () => {
               <DollarSign className="h-5 w-5 text-primary" />
             </div>
             <div>
-              <h3 className="text-xl font-semibold">Recent Activity</h3>
-              <p className="text-sm text-muted-foreground">Latest financial transactions</p>
+              <h3 className="text-xl font-semibold">This Month's Activity</h3>
+              <p className="text-sm text-muted-foreground">Current month transactions</p>
             </div>
           </div>
           <Button variant="ghost" size="sm" className="text-primary hover:bg-primary/5">
