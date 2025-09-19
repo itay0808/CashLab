@@ -112,10 +112,10 @@ export const SavingsGoal = () => {
           <div>
             <div className="flex justify-between items-end mb-2">
               <span className="text-2xl font-bold">
-                ₪{goal.current_amount.toLocaleString()}
+                ₪{goal.current_amount.toLocaleString('he-IL', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
               </span>
               <span className="text-sm text-white/80">
-                of ₪{goal.target_amount.toLocaleString()}
+                of ₪{goal.target_amount.toLocaleString('he-IL', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
               </span>
             </div>
             <Progress value={progress} className="h-2 bg-white/20" />
@@ -125,7 +125,7 @@ export const SavingsGoal = () => {
             {goal.monthly_contribution && (
               <div className="bg-white/10 rounded-lg p-3">
                 <div className="text-sm text-white/80">Monthly Goal</div>
-                <div className="font-semibold">₪{goal.monthly_contribution}</div>
+                <div className="font-semibold">₪{goal.monthly_contribution.toLocaleString('he-IL', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}</div>
               </div>
             )}
             {monthsToGoal && (

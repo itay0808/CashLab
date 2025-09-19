@@ -44,43 +44,50 @@ const Auth = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-subtle p-4">
-      <div className="w-full max-w-md">
-        <div className="text-center mb-8">
-          <div className="flex items-center justify-center gap-3 mb-4">
-            <div className="p-3 bg-primary rounded-full">
-              <DollarSign className="h-8 w-8 text-primary-foreground" />
-            </div>
-            <h1 className="text-3xl font-bold">Cashlab</h1>
+    <div className="min-h-screen bg-gradient-primary flex items-center justify-center p-4 relative overflow-hidden">
+      {/* Background decorative elements */}
+      <div className="absolute inset-0 opacity-10">
+        <div className="absolute top-10 left-10 w-72 h-72 bg-primary-light rounded-full blur-3xl"></div>
+        <div className="absolute bottom-10 right-10 w-96 h-96 bg-success-light rounded-full blur-3xl"></div>
+      </div>
+      
+      <div className="w-full max-w-md relative z-10">
+        {/* Logo and Brand */}
+        <div className="text-center mb-12">
+          <div className="inline-flex items-center justify-center w-20 h-20 bg-card/20 backdrop-blur-sm rounded-2xl mb-6 shadow-elevated">
+            <DollarSign className="h-10 w-10 text-primary-foreground" />
           </div>
-          <p className="text-muted-foreground">
-            Manage your finances with confidence
+          <h1 className="text-4xl font-bold text-primary-foreground mb-3">Cashlab</h1>
+          <p className="text-primary-foreground/80 text-lg">
+            Your smart financial companion
           </p>
         </div>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Welcome to Cashlab</CardTitle>
-            <CardDescription>
-              Enter your credentials to access your account
+        {/* Auth Card */}
+        <Card className="bg-card/95 backdrop-blur-sm border-border/50 shadow-elevated">
+          <CardHeader className="text-center pb-8">
+            <CardTitle className="text-2xl">Welcome Back</CardTitle>
+            <CardDescription className="text-base">
+              Sign in to access your financial dashboard
             </CardDescription>
           </CardHeader>
-          <CardContent>
-            <form onSubmit={handleSignIn} className="space-y-4">
-              <div>
-                <Label htmlFor="signin-email">Email</Label>
+          <CardContent className="px-8 pb-8">
+            <form onSubmit={handleSignIn} className="space-y-6">
+              <div className="space-y-2">
+                <Label htmlFor="signin-email" className="text-sm font-medium">Email Address</Label>
                 <Input
                   id="signin-email"
                   type="email"
                   placeholder="Enter your email"
                   value={signInEmail}
                   onChange={(e) => setSignInEmail(e.target.value)}
+                  className="h-12 bg-background/50 border-border/50 focus:border-primary"
                   required
                 />
               </div>
 
-              <div>
-                <Label htmlFor="signin-password">Password</Label>
+              <div className="space-y-2">
+                <Label htmlFor="signin-password" className="text-sm font-medium">Password</Label>
                 <div className="relative">
                   <Input
                     id="signin-password"
@@ -88,13 +95,14 @@ const Auth = () => {
                     placeholder="Enter your password"
                     value={signInPassword}
                     onChange={(e) => setSignInPassword(e.target.value)}
+                    className="h-12 bg-background/50 border-border/50 focus:border-primary pr-12"
                     required
                   />
                   <Button
                     type="button"
                     variant="ghost"
                     size="sm"
-                    className="absolute right-0 top-0 h-full px-3 hover:bg-transparent"
+                    className="absolute right-1 top-1 h-10 w-10 hover:bg-muted/50"
                     onClick={() => setShowPassword(!showPassword)}
                   >
                     {showPassword ? (
@@ -108,14 +116,21 @@ const Auth = () => {
 
               <Button 
                 type="submit" 
-                className="w-full" 
+                className="w-full h-12 text-base font-medium bg-gradient-primary hover:opacity-90 shadow-primary" 
                 disabled={signInLoading}
               >
-                {signInLoading ? "Signing In..." : "Sign In"}
+                {signInLoading ? "Signing In..." : "Sign In to Dashboard"}
               </Button>
             </form>
           </CardContent>
         </Card>
+        
+        {/* Footer */}
+        <div className="text-center mt-8">
+          <p className="text-primary-foreground/60 text-sm">
+            Secure • Reliable • Smart Financial Management
+          </p>
+        </div>
       </div>
     </div>
   );

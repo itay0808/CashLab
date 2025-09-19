@@ -94,122 +94,162 @@ const Accounts = () => {
     <div className="min-h-screen bg-gradient-subtle">
       <Navigation />
       
-      <main className="max-w-7xl mx-auto p-6 space-y-8">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold">Accounts</h1>
-            <p className="text-muted-foreground">Manage your financial accounts</p>
+      <main className="max-w-7xl mx-auto p-4 md:p-6 space-y-6 md:space-y-8">
+        {/* Header Section */}
+        <div className="relative overflow-hidden rounded-3xl bg-gradient-primary p-8 text-primary-foreground shadow-primary">
+          <div className="absolute inset-0 opacity-20">
+            <div className="absolute top-0 right-0 w-48 h-48 bg-success-light rounded-full blur-2xl"></div>
+            <div className="absolute bottom-0 left-0 w-36 h-36 bg-primary-light rounded-full blur-2xl"></div>
           </div>
-          <div className="flex items-center gap-3">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setShowBalances(!showBalances)}
-              className="gap-2"
-            >
-              {showBalances ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-              {showBalances ? 'Hide' : 'Show'} Balances
-            </Button>
-            <Button onClick={() => setShowAddAccount(true)} className="gap-2">
-              <Plus className="h-4 w-4" />
-              Add Account
-            </Button>
+          <div className="relative flex items-center justify-between">
+            <div>
+              <h1 className="text-2xl md:text-3xl font-bold mb-2">Financial Accounts</h1>
+              <p className="text-primary-foreground/80">Manage and monitor all your financial accounts</p>
+            </div>
+            <div className="flex items-center gap-3">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setShowBalances(!showBalances)}
+                className="bg-primary-foreground/10 border-primary-foreground/20 text-primary-foreground hover:bg-primary-foreground/20"
+              >
+                {showBalances ? <EyeOff className="h-4 w-4 mr-2" /> : <Eye className="h-4 w-4 mr-2" />}
+                {showBalances ? 'Hide' : 'Show'}
+              </Button>
+              <Button 
+                onClick={() => setShowAddAccount(true)} 
+                className="bg-primary-foreground text-primary hover:bg-primary-foreground/90 shadow-elevated"
+              >
+                <Plus className="h-4 w-4 mr-2" />
+                Add Account
+              </Button>
+            </div>
           </div>
         </div>
 
-        {/* Total Balance Card */}
-        <Card className="bg-gradient-primary text-primary-foreground">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <CreditCard className="h-5 w-5" />
-              Total Balance
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-bold">
-              {showBalances ? `₪${totalBalance.toLocaleString('he-IL', { minimumFractionDigits: 2 })}` : '••••••'}
+        {/* Total Balance Overview */}
+        <Card className="bg-gradient-card shadow-elevated border-border/50">
+          <div className="p-6">
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center gap-3">
+                <div className="p-3 bg-primary/10 rounded-full">
+                  <CreditCard className="h-6 w-6 text-primary" />
+                </div>
+                <div>
+                  <h3 className="text-xl font-semibold">Portfolio Overview</h3>
+                  <p className="text-muted-foreground">Total across all accounts</p>
+                </div>
+              </div>
             </div>
-            <p className="text-primary-foreground/80 mt-2">
-              Across {accounts.length} account{accounts.length !== 1 ? 's' : ''}
-            </p>
-          </CardContent>
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="col-span-1 md:col-span-2">
+                <div className="text-4xl md:text-5xl font-bold text-foreground mb-2">
+                  {showBalances ? `₪${totalBalance.toLocaleString('he-IL', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}` : '••••••••'}
+                </div>
+                <div className="flex items-center gap-2 text-muted-foreground">
+                  <span>Across {accounts.length} active {accounts.length !== 1 ? 'accounts' : 'account'}</span>
+                  <div className="w-1 h-1 bg-muted-foreground/50 rounded-full"></div>
+                  <span>ILS Currency</span>
+                </div>
+              </div>
+              <div className="flex items-center justify-center">
+                <div className="text-center p-4 bg-gradient-subtle rounded-xl border border-border/50">
+                  <div className="text-2xl font-bold text-success mb-1">+12.5%</div>
+                  <div className="text-sm text-muted-foreground">This month</div>
+                </div>
+              </div>
+            </div>
+          </div>
         </Card>
 
-        {/* Accounts List */}
+        {/* Accounts Grid */}
         {accountsLoading ? (
-          <Card>
-            <CardContent className="p-6">
-              <div className="text-center">Loading accounts...</div>
-            </CardContent>
+          <Card className="bg-gradient-card shadow-elevated">
+            <div className="p-8 text-center">
+              <div className="animate-pulse space-y-4">
+                <div className="h-8 bg-muted rounded w-1/4 mx-auto"></div>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {[1, 2, 3].map((i) => (
+                    <div key={i} className="h-32 bg-muted rounded-xl"></div>
+                  ))}
+                </div>
+              </div>
+            </div>
           </Card>
         ) : accounts.length === 0 ? (
-          <Card>
-            <CardContent className="p-12 text-center">
-              <CreditCard className="h-16 w-16 mx-auto text-muted-foreground mb-4" />
-              <h3 className="text-xl font-semibold mb-2">No accounts yet</h3>
-              <p className="text-muted-foreground mb-6">
-                Add your first account to start tracking your finances.
+          <Card className="bg-gradient-card shadow-elevated">
+            <div className="p-16 text-center">
+              <div className="w-24 h-24 mx-auto mb-6 bg-muted/30 rounded-2xl flex items-center justify-center">
+                <CreditCard className="h-12 w-12 text-muted-foreground" />
+              </div>
+              <h3 className="text-2xl font-bold mb-3">Start Your Financial Journey</h3>
+              <p className="text-muted-foreground mb-8 max-w-md mx-auto">
+                Connect your first account to begin tracking your finances and building wealth.
               </p>
-              <Button onClick={() => setShowAddAccount(true)} className="gap-2">
-                <Plus className="h-4 w-4" />
-                Add Account
+              <Button onClick={() => setShowAddAccount(true)} className="bg-gradient-primary shadow-primary">
+                <Plus className="h-4 w-4 mr-2" />
+                Add Your First Account
               </Button>
-            </CardContent>
+            </div>
           </Card>
         ) : (
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {accounts.map((account) => (
-              <Card key={account.id} className="hover:shadow-md transition-shadow">
-                <CardHeader className="pb-4">
-                  <div className="flex items-start justify-between">
+              <Card key={account.id} className="group bg-gradient-card shadow-elevated border-border/50 hover:shadow-primary/20 transition-all duration-200">
+                <div className="p-6">
+                  <div className="flex items-start justify-between mb-6">
                     <div className="flex items-center gap-3">
-                      <div className="p-2 bg-primary/10 rounded-full">
-                        <CreditCard className="h-5 w-5 text-primary" />
+                      <div className="p-3 bg-primary/10 rounded-xl">
+                        <CreditCard className="h-6 w-6 text-primary" />
                       </div>
                       <div>
-                        <CardTitle className="text-lg">{account.name}</CardTitle>
+                        <h4 className="text-lg font-semibold">{account.name}</h4>
                         <Badge 
                           variant="secondary" 
                           className={`mt-1 capitalize ${getAccountTypeColor(account.type)}`}
                         >
-                          {account.type}
+                          {account.type.replace('_', ' ')}
                         </Badge>
                       </div>
                     </div>
                   </div>
-                </CardHeader>
-                
-                <CardContent className="space-y-4">
-                  <div>
-                    <p className="text-sm text-muted-foreground">Balance</p>
-                    <p className="text-2xl font-bold">
-                      {showBalances 
-                        ? `₪${Number(account.balance).toLocaleString('he-IL', { minimumFractionDigits: 2 })}` 
-                        : '••••••'
-                      }
-                    </p>
-                    <p className="text-xs text-muted-foreground">
-                      {account.currency}
-                    </p>
-                  </div>
                   
-                  <div className="pt-4 border-t">
-                    <p className="text-xs text-muted-foreground">
-                      Created: {new Date(account.created_at).toLocaleDateString()}
-                    </p>
+                  <div className="space-y-4">
+                    <div>
+                      <p className="text-sm text-muted-foreground mb-1">Current Balance</p>
+                      <p className="text-3xl font-bold">
+                        {showBalances 
+                          ? `₪${Number(account.balance).toLocaleString('he-IL', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}` 
+                          : '••••••••'
+                        }
+                      </p>
+                      <p className="text-xs text-muted-foreground mt-1">
+                        {account.currency} • Updated today
+                      </p>
+                    </div>
+                    
+                    <div className="pt-4 border-t border-border/50">
+                      <p className="text-xs text-muted-foreground mb-3">
+                        Added {new Date(account.created_at).toLocaleDateString('en-US', {
+                          month: 'short',
+                          day: 'numeric',
+                          year: 'numeric'
+                        })}
+                      </p>
+                      
+                      <div className="flex gap-2">
+                        <Button variant="outline" size="sm" className="flex-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                          <Edit className="h-3 w-3 mr-2" />
+                          Edit
+                        </Button>
+                        <Button variant="outline" size="sm" className="text-danger hover:text-danger opacity-0 group-hover:opacity-100 transition-opacity">
+                          <Trash2 className="h-3 w-3" />
+                        </Button>
+                      </div>
+                    </div>
                   </div>
-
-                  <div className="flex gap-2">
-                    <Button variant="outline" size="sm" className="flex-1 gap-2">
-                      <Edit className="h-3 w-3" />
-                      Edit
-                    </Button>
-                    <Button variant="outline" size="sm" className="gap-2 text-red-600 hover:text-red-600">
-                      <Trash2 className="h-3 w-3" />
-                      Delete
-                    </Button>
-                  </div>
-                </CardContent>
+                </div>
               </Card>
             ))}
           </div>

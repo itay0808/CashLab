@@ -139,93 +139,121 @@ export const SubscriptionsTracker = () => {
   }
 
   return (
-    <Card className="p-6 bg-gradient-card shadow-card">
-      <div className="flex items-center justify-between mb-6">
-        <div>
-          <h3 className="text-lg font-semibold">Subscriptions</h3>
-          <p className="text-sm text-muted-foreground">
-            ₪{totalMonthly.toFixed(2)}/month • {subscriptions.length} active
-          </p>
-        </div>
-        <Button 
-          variant="outline" 
-          size="sm" 
-          className="text-primary border-primary/20 hover:bg-primary/10"
-          onClick={() => window.location.href = '/transactions'}
-        >
-          <Plus className="h-4 w-4 mr-1" />
-          Add New
-        </Button>
-      </div>
-
-      {subscriptions.length === 0 ? (
-        <div className="text-center py-8">
-          <Calendar className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-          <p className="text-muted-foreground mb-4">No active subscriptions found</p>
+    <Card className="bg-gradient-card shadow-elevated border-border/50">
+      <div className="p-6 space-y-6">
+        <div className="flex items-center justify-between">
+          <div className="space-y-1">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-primary/10 rounded-full">
+                <Calendar className="h-5 w-5 text-primary" />
+              </div>
+              <h3 className="text-xl font-semibold">Active Subscriptions</h3>
+            </div>
+            <div className="flex items-center gap-4 text-sm">
+              <div className="flex items-center gap-2">
+                <div className="w-2 h-2 bg-success rounded-full"></div>
+                <span className="font-semibold text-success">₪{totalMonthly.toFixed(0)}</span>
+                <span className="text-muted-foreground">monthly</span>
+              </div>
+              <div className="flex items-center gap-1 text-muted-foreground">
+                <span>{subscriptions.length} active</span>
+              </div>
+            </div>
+          </div>
           <Button 
             variant="outline" 
-            size="sm"
+            size="sm" 
+            className="bg-primary/5 border-primary/20 text-primary hover:bg-primary/10"
             onClick={() => window.location.href = '/transactions'}
           >
-            <Plus className="h-4 w-4 mr-1" />
-            Add Subscription
+            <Plus className="h-4 w-4 mr-2" />
+            Add
           </Button>
         </div>
-      ) : (
-        <>
-          <div className="space-y-3">
+
+        {subscriptions.length === 0 ? (
+          <div className="text-center py-12">
+            <div className="w-16 h-16 mx-auto mb-4 bg-muted/50 rounded-2xl flex items-center justify-center">
+              <Calendar className="h-8 w-8 text-muted-foreground" />
+            </div>
+            <h4 className="font-semibold text-lg mb-2">No subscriptions yet</h4>
+            <p className="text-muted-foreground mb-6">Track recurring payments to better manage your budget</p>
+            <Button 
+              onClick={() => window.location.href = '/transactions'}
+              className="bg-gradient-primary shadow-primary"
+            >
+              <Plus className="h-4 w-4 mr-2" />
+              Add First Subscription
+            </Button>
+          </div>
+        ) : (
+          <div className="space-y-4">
             {subscriptions.map((sub) => (
-              <div key={sub.id} className="flex items-center justify-between p-3 rounded-lg border border-border/50">
-                <div className="flex items-center gap-3">
-                  <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-semibold ${
-                    isExpiringSoon(sub.next_due_date) ? 'bg-warning/10 text-warning' : 'bg-primary/10 text-primary'
-                  }`}>
-                     {sub.name.charAt(0)}
-                  </div>
-                  <div>
-                    <div className="font-medium flex items-center gap-2">
-                      {sub.name}
+              <div key={sub.id} className="group p-4 rounded-xl border border-border/50 bg-gradient-subtle hover:shadow-card transition-all duration-200">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-4">
+                    <div className={`relative w-12 h-12 rounded-xl flex items-center justify-center text-lg font-bold ${
+                      isExpiringSoon(sub.next_due_date) 
+                        ? 'bg-warning/10 text-warning border-2 border-warning/20' 
+                        : 'bg-primary/10 text-primary border-2 border-primary/20'
+                    }`}>
+                      {sub.name.charAt(0).toUpperCase()}
                       {isExpiringSoon(sub.next_due_date) && (
-                        <AlertTriangle className="h-4 w-4 text-warning" />
+                        <div className="absolute -top-1 -right-1 w-3 h-3 bg-warning rounded-full flex items-center justify-center">
+                          <AlertTriangle className="h-2 w-2 text-white" />
+                        </div>
                       )}
                     </div>
-                    <div className="text-sm text-muted-foreground flex items-center gap-2">
-                      <Calendar className="h-3 w-3" />
-                      Next: {formatDate(sub.next_due_date)}
-                       <Badge variant="outline" className="text-xs">
-                         Subscription
-                       </Badge>
+                    <div className="space-y-1">
+                      <div className="font-semibold text-base">{sub.name}</div>
+                      <div className="flex items-center gap-3 text-sm text-muted-foreground">
+                        <div className="flex items-center gap-1">
+                          <Calendar className="h-3 w-3" />
+                          <span>Due {formatDate(sub.next_due_date)}</span>
+                        </div>
+                        <Badge variant="secondary" className="text-xs bg-muted/50">
+                          {sub.frequency}
+                        </Badge>
+                      </div>
                     </div>
                   </div>
-                </div>
 
-                <div className="flex items-center gap-2">
-                  <span className="font-semibold">₪{sub.amount}</span>
-                  <Button 
-                    variant="ghost" 
-                    size="sm" 
-                    className="text-muted-foreground hover:text-danger"
-                    onClick={() => handleDeleteSubscription(sub.id)}
-                  >
-                    <X className="h-4 w-4" />
-                  </Button>
+                  <div className="flex items-center gap-3">
+                    <div className="text-right">
+                      <div className="text-lg font-bold">₪{sub.amount}</div>
+                      <div className="text-xs text-muted-foreground">per {sub.frequency.slice(0, -2)}</div>
+                    </div>
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      className="opacity-0 group-hover:opacity-100 text-muted-foreground hover:text-danger transition-all"
+                      onClick={() => handleDeleteSubscription(sub.id)}
+                    >
+                      <X className="h-4 w-4" />
+                    </Button>
+                  </div>
                 </div>
               </div>
             ))}
-          </div>
 
-          {expiringSoonCount > 0 && (
-            <div className="mt-4 p-3 bg-warning/10 rounded-lg border border-warning/20">
-              <div className="flex items-center gap-2 text-sm">
-                <AlertTriangle className="h-4 w-4 text-warning" />
-                <span className="font-medium text-warning">
-                  {expiringSoonCount} subscription{expiringSoonCount > 1 ? 's' : ''} due soon
-                </span>
+            {expiringSoonCount > 0 && (
+              <div className="p-4 bg-warning/5 border border-warning/20 rounded-xl">
+                <div className="flex items-center gap-3">
+                  <div className="p-1 bg-warning/20 rounded-full">
+                    <AlertTriangle className="h-4 w-4 text-warning" />
+                  </div>
+                  <div>
+                    <div className="font-medium text-warning">
+                      {expiringSoonCount} subscription{expiringSoonCount > 1 ? 's' : ''} due within 7 days
+                    </div>
+                    <div className="text-sm text-muted-foreground">Review and prepare for upcoming payments</div>
+                  </div>
+                </div>
               </div>
-            </div>
-          )}
-        </>
-      )}
+            )}
+          </div>
+        )}
+      </div>
     </Card>
   );
 };

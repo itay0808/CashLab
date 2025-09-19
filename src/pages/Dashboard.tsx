@@ -35,10 +35,21 @@ const Dashboard = () => {
     <div className="min-h-screen bg-gradient-subtle">
       <Navigation />
       
-      <main className="max-w-7xl mx-auto p-6 space-y-8">
+      <main className="max-w-7xl mx-auto p-4 md:p-6 space-y-6 md:space-y-8">
+        {/* Hero Section */}
+        <div className="relative overflow-hidden rounded-3xl bg-gradient-primary p-8 text-primary-foreground shadow-primary">
+          <div className="absolute inset-0 opacity-20">
+            <div className="absolute top-0 right-0 w-64 h-64 bg-primary-light rounded-full blur-2xl"></div>
+            <div className="absolute bottom-0 left-0 w-48 h-48 bg-success-light rounded-full blur-2xl"></div>
+          </div>
+          <div className="relative">
+            <h1 className="text-2xl md:text-3xl font-bold mb-2">Financial Dashboard</h1>
+            <p className="text-primary-foreground/80">Track, analyze, and optimize your financial health</p>
+          </div>
+        </div>
 
-        {/* Top Row - Account Balance and Savings Goal */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Financial Overview Row */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6">
           <div className="lg:col-span-2">
             <AccountBalance key={refreshTrigger} />
           </div>
@@ -47,8 +58,8 @@ const Dashboard = () => {
           </div>
         </div>
 
-        {/* Middle Row - Budget Overview */}
-        <div className="grid grid-cols-1 gap-6">
+        {/* Budget Section */}
+        <div className="space-y-4">
           <BudgetOverview 
             key={refreshTrigger} 
             refreshTrigger={refreshTrigger}
@@ -56,14 +67,14 @@ const Dashboard = () => {
           />
         </div>
 
-        {/* Third Row - Spending Chart and Subscriptions */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Analytics Row */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
           <SpendingChart key={refreshTrigger} />
           <SubscriptionsTracker key={refreshTrigger} />
         </div>
 
-        {/* Bottom Row - Recent Transactions */}
-        <div className="grid grid-cols-1 gap-6">
+        {/* Activity Section */}
+        <div className="space-y-4">
           <TransactionsList key={refreshTrigger} />
         </div>
       </main>

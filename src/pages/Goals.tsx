@@ -32,58 +32,83 @@ const Goals = () => {
     <div className="min-h-screen bg-gradient-subtle">
       <Navigation />
       
-      <main className="max-w-7xl mx-auto p-6 space-y-8">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold">Goals & Investments</h1>
-            <p className="text-muted-foreground">Track your savings goals and investment portfolio</p>
+      <main className="max-w-7xl mx-auto p-4 md:p-6 space-y-6 md:space-y-8">
+        {/* Header Section */}
+        <div className="relative overflow-hidden rounded-3xl bg-gradient-primary p-8 text-primary-foreground shadow-primary">
+          <div className="absolute inset-0 opacity-20">
+            <div className="absolute top-0 right-0 w-48 h-48 bg-success-light rounded-full blur-2xl"></div>
+            <div className="absolute bottom-0 left-0 w-36 h-36 bg-primary-light rounded-full blur-2xl"></div>
           </div>
-          <div className="flex gap-2">
-            <Button variant="outline" onClick={() => setShowAddInvestment(true)}>
-              <Plus className="h-4 w-4 mr-2" />
-              Add Investment
-            </Button>
-            <Button onClick={() => setShowCreateGoal(true)}>
-              <Plus className="h-4 w-4 mr-2" />
-              Create Goal
-            </Button>
+          <div className="relative flex items-center justify-between">
+            <div>
+              <h1 className="text-2xl md:text-3xl font-bold mb-2">Goals & Investments</h1>
+              <p className="text-primary-foreground/80">Build wealth and achieve your financial dreams</p>
+            </div>
+            <div className="flex gap-3">
+              <Button 
+                variant="outline" 
+                onClick={() => setShowAddInvestment(true)}
+                className="bg-primary-foreground/10 border-primary-foreground/20 text-primary-foreground hover:bg-primary-foreground/20"
+              >
+                <Plus className="h-4 w-4 mr-2" />
+                Investment
+              </Button>
+              <Button 
+                onClick={() => setShowCreateGoal(true)}
+                className="bg-primary-foreground text-primary hover:bg-primary-foreground/90 shadow-elevated"
+              >
+                <Plus className="h-4 w-4 mr-2" />
+                Create Goal
+              </Button>
+            </div>
           </div>
         </div>
 
+        {/* Tab Navigation */}
         <Tabs defaultValue="goals" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="goals" className="gap-2">
-              <Target className="h-4 w-4" />
-              Savings Goals
-            </TabsTrigger>
-            <TabsTrigger value="investments" className="gap-2">
-              <TrendingUp className="h-4 w-4" />
-              Investments
-            </TabsTrigger>
-            <TabsTrigger value="forecast" className="gap-2">
-              <TrendingUp className="h-4 w-4" />
-              Cash Flow
-            </TabsTrigger>
-          </TabsList>
+          <div className="flex justify-center">
+            <TabsList className="grid w-full max-w-md grid-cols-3 bg-card shadow-card border border-border/50">
+              <TabsTrigger value="goals" className="gap-2 data-[state=active]:bg-gradient-primary data-[state=active]:text-primary-foreground">
+                <Target className="h-4 w-4" />
+                <span className="hidden sm:inline">Savings Goals</span>
+                <span className="sm:hidden">Goals</span>
+              </TabsTrigger>
+              <TabsTrigger value="investments" className="gap-2 data-[state=active]:bg-gradient-primary data-[state=active]:text-primary-foreground">
+                <TrendingUp className="h-4 w-4" />
+                <span className="hidden sm:inline">Investments</span>
+                <span className="sm:hidden">Invest</span>
+              </TabsTrigger>
+              <TabsTrigger value="forecast" className="gap-2 data-[state=active]:bg-gradient-primary data-[state=active]:text-primary-foreground">
+                <TrendingUp className="h-4 w-4" />
+                <span className="hidden sm:inline">Cash Flow</span>
+                <span className="sm:hidden">Flow</span>
+              </TabsTrigger>
+            </TabsList>
+          </div>
 
-          <TabsContent value="goals">
+          <TabsContent value="goals" className="space-y-6">
             <SavingsGoalsOverview />
           </TabsContent>
 
-          <TabsContent value="investments">
-            <Card>
-              <CardHeader>
-                <CardTitle>Investment Portfolio</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-center py-8 text-muted-foreground">
-                  Investment tracking functionality coming soon
+          <TabsContent value="investments" className="space-y-6">
+            <Card className="bg-gradient-card shadow-elevated border-border/50">
+              <div className="p-8 text-center">
+                <div className="w-20 h-20 mx-auto mb-6 bg-muted/30 rounded-2xl flex items-center justify-center">
+                  <TrendingUp className="h-10 w-10 text-muted-foreground" />
                 </div>
-              </CardContent>
+                <h3 className="text-xl font-semibold mb-3">Investment Portfolio</h3>
+                <p className="text-muted-foreground mb-6 max-w-md mx-auto">
+                  Track stocks, bonds, and other investments to monitor your portfolio performance
+                </p>
+                <Button onClick={() => setShowAddInvestment(true)} className="bg-gradient-primary shadow-primary">
+                  <Plus className="h-4 w-4 mr-2" />
+                  Add First Investment
+                </Button>
+              </div>
             </Card>
           </TabsContent>
 
-          <TabsContent value="forecast">
+          <TabsContent value="forecast" className="space-y-6">
             <CashFlowForecast />
           </TabsContent>
         </Tabs>
