@@ -2,14 +2,12 @@ import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { useAuth } from "@/hooks/useAuth";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { MobileNavigation } from "./MobileNavigation";
 import { 
   Home, 
-  CreditCard, 
   Receipt, 
   Calculator, 
-  TrendingUp, 
-  BarChart3, 
-  Repeat,
   LogOut,
   User,
   Settings
@@ -32,6 +30,7 @@ const navigation = [
 export const Navigation = () => {
   const location = useLocation();
   const { user, signOut } = useAuth();
+  const isMobile = useIsMobile();
 
   const handleSignOut = async () => {
     await signOut();
@@ -42,6 +41,11 @@ export const Navigation = () => {
     return name.split(" ").map(n => n[0]).join("").toUpperCase().slice(0, 2);
   };
 
+  // Show mobile navigation for small screens
+  if (isMobile) {
+    return <MobileNavigation />;
+  }
+
   return (
     <nav className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -49,13 +53,12 @@ export const Navigation = () => {
           {/* Logo and Navigation */}
           <div className="flex items-center">
             <Link to="/" className="flex items-center gap-2 mr-8">
-              <div className="p-2 bg-primary rounded-lg">
-                <BarChart3 className="h-6 w-6 text-primary-foreground" />
+              <div className="bg-gradient-primary bg-clip-text text-transparent">
+                <span className="text-xl font-bold">Cashlab</span>
               </div>
-              <span className="text-xl font-bold">Cashlab</span>
             </Link>
 
-            <div className="hidden sm:flex items-center gap-1">
+            <div className="flex items-center gap-1">
               {navigation.map((item) => {
                 const isActive = location.pathname === item.href;
                 const Icon = item.icon;
@@ -100,6 +103,12 @@ export const Navigation = () => {
                   </div>
                 </div>
                 <DropdownMenuSeparator />
+                <DropdownMenuItem asChild>
+                  <Link to="/edit-profile" className="cursor-pointer">
+                    <User className="mr-2 h-4 w-4" />
+                    <span>Edit Profile</span>
+                  </Link>
+                </DropdownMenuItem>
                 <DropdownMenuItem onClick={handleSignOut}>
                   <LogOut className="mr-2 h-4 w-4" />
                   <span>Sign out</span>
@@ -107,29 +116,6 @@ export const Navigation = () => {
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
-        </div>
-      </div>
-
-      {/* Mobile Navigation */}
-      <div className="sm:hidden border-t">
-        <div className="px-2 py-2 space-y-1">
-          {navigation.map((item) => {
-            const isActive = location.pathname === item.href;
-            const Icon = item.icon;
-            
-            return (
-              <Link key={item.name} to={item.href}>
-                <Button
-                  variant={isActive ? "default" : "ghost"}
-                  size="sm"
-                  className="w-full justify-start gap-2"
-                >
-                  <Icon className="h-4 w-4" />
-                  {item.name}
-                </Button>
-              </Link>
-            );
-          })}
         </div>
       </div>
     </nav>
