@@ -441,6 +441,44 @@ export type Database = {
           updated_at?: string
           user_id?: string
         }
+        Relationships: [
+          {
+            foreignKeyName: "recurring_transactions_account_id_fkey"
+            columns: ["account_id"]
+            isOneToOne: false
+            referencedRelation: "accounts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      savings_accounts: {
+        Row: {
+          balance: number
+          created_at: string
+          currency: string
+          id: string
+          name: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          balance?: number
+          created_at?: string
+          currency?: string
+          id?: string
+          name?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          balance?: number
+          created_at?: string
+          currency?: string
+          id?: string
+          name?: string
+          updated_at?: string
+          user_id?: string
+        }
         Relationships: []
       }
       savings_goal_transactions: {
@@ -530,6 +568,33 @@ export type Database = {
         }
         Relationships: []
       }
+      savings_transfers: {
+        Row: {
+          amount: number
+          created_at: string
+          description: string | null
+          id: string
+          transfer_type: string
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          description?: string | null
+          id?: string
+          transfer_type: string
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          description?: string | null
+          id?: string
+          transfer_type?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       transactions: {
         Row: {
           account_id: string
@@ -605,6 +670,23 @@ export type Database = {
           total_gain_loss: number
           total_value: number
         }[]
+      }
+      get_or_create_main_account: {
+        Args: { user_id_param: string }
+        Returns: string
+      }
+      get_or_create_savings_account: {
+        Args: { user_id_param: string }
+        Returns: string
+      }
+      process_savings_transfer: {
+        Args: {
+          amount_param: number
+          description_param?: string
+          transfer_type_param: string
+          user_id_param: string
+        }
+        Returns: undefined
       }
     }
     Enums: {
