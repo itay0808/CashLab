@@ -148,10 +148,10 @@ export const SavingsGoalsOverview = () => {
                   <div>
                     <div className="flex justify-between items-end mb-2">
                       <span className="text-2xl font-bold">
-                        ${goal.current_amount.toLocaleString()}
+                        ₪{goal.current_amount.toLocaleString()}
                       </span>
                       <span className="text-sm text-muted-foreground">
-                        of ${goal.target_amount.toLocaleString()}
+                        of ₪{goal.target_amount.toLocaleString()}
                       </span>
                     </div>
                     <Progress value={progress} className="h-2" />
@@ -162,7 +162,7 @@ export const SavingsGoalsOverview = () => {
                       {goal.monthly_contribution && (
                         <div className="bg-muted/50 rounded-lg p-3">
                           <div className="text-sm text-muted-foreground">Monthly</div>
-                          <div className="font-semibold">${goal.monthly_contribution}</div>
+                          <div className="font-semibold">₪{goal.monthly_contribution}</div>
                         </div>
                       )}
                       {monthsToGoal !== null && (

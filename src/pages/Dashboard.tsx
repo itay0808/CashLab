@@ -6,11 +6,14 @@ import { SpendingChart } from "@/components/dashboard/SpendingChart";
 import { SubscriptionsTracker } from "@/components/dashboard/SubscriptionsTracker";
 import { SavingsGoal } from "@/components/dashboard/SavingsGoal";
 import { TransactionsList } from "@/components/dashboard/TransactionsList";
+import { BudgetOverview } from "@/components/budget/BudgetOverview";
+import { CreateBudgetDialog } from "@/components/budget/CreateBudgetDialog";
 import { useState } from "react";
 
 const Dashboard = () => {
   const { user, loading } = useAuth();
   const [refreshTrigger, setRefreshTrigger] = useState(0);
+  const [showCreateBudget, setShowCreateBudget] = useState(false);
 
   if (loading) {
     return (
@@ -44,7 +47,16 @@ const Dashboard = () => {
           </div>
         </div>
 
-        {/* Middle Row - Spending Chart and Subscriptions */}
+        {/* Middle Row - Budget Overview */}
+        <div className="grid grid-cols-1 gap-6">
+          <BudgetOverview 
+            key={refreshTrigger} 
+            refreshTrigger={refreshTrigger}
+            onCreateBudget={() => setShowCreateBudget(true)} 
+          />
+        </div>
+
+        {/* Third Row - Spending Chart and Subscriptions */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <SpendingChart key={refreshTrigger} />
           <SubscriptionsTracker key={refreshTrigger} />
@@ -56,6 +68,11 @@ const Dashboard = () => {
         </div>
       </main>
 
+      <CreateBudgetDialog 
+        open={showCreateBudget} 
+        onOpenChange={setShowCreateBudget}
+        onBudgetCreated={handleDataRefresh}
+      />
     </div>
   );
 };

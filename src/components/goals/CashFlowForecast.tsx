@@ -229,7 +229,7 @@ export const CashFlowForecast = () => {
               <YAxis 
                 tick={{ fontSize: 12 }}
                 tickLine={false}
-                tickFormatter={(value) => `$${(value / 1000).toFixed(0)}k`}
+                tickFormatter={(value) => `₪${(value / 1000).toFixed(0)}k`}
               />
               <Tooltip 
                 formatter={(value: number, name: string) => [

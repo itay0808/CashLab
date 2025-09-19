@@ -4,7 +4,7 @@ import { Navigation } from "@/components/navigation/Navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Plus, Receipt, Repeat, CreditCard } from "lucide-react";
+import { Plus, Receipt, CreditCard } from "lucide-react";
 import { TransactionsList } from "@/components/dashboard/TransactionsList";
 import { SubscriptionsTracker } from "@/components/dashboard/SubscriptionsTracker";
 import { RecurringTransactionsList } from "@/components/recurring/RecurringTransactionsList";
@@ -15,6 +15,7 @@ import { useState } from "react";
 const Transactions = () => {
   const { user, loading } = useAuth();
   const [showAddTransaction, setShowAddTransaction] = useState(false);
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
 
   if (loading) {
     return (
@@ -28,6 +29,9 @@ const Transactions = () => {
     return <Navigate to="/auth" replace />;
   }
 
+  const handleDataRefresh = () => {
+    setRefreshTrigger(prev => prev + 1);
+  };
 
   return (
     <div className="min-h-screen bg-gradient-subtle">
@@ -37,7 +41,7 @@ const Transactions = () => {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold">Transactions</h1>
-            <p className="text-muted-foreground">Manage your transactions and recurring payments</p>
+            <p className="text-muted-foreground">Manage all your transactions and subscriptions</p>
           </div>
           <Button onClick={() => setShowAddTransaction(true)}>
             <Plus className="h-4 w-4 mr-2" />
@@ -64,7 +68,7 @@ const Transactions = () => {
                   <CardTitle>Recent Transactions</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <TransactionsList />
+                  <TransactionsList key={refreshTrigger} />
                 </CardContent>
               </Card>
               
@@ -73,7 +77,7 @@ const Transactions = () => {
                   <CardTitle>Recurring Transactions</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <RecurringTransactionsList />
+                  <RecurringTransactionsList key={refreshTrigger} />
                 </CardContent>
               </Card>
             </div>
@@ -85,7 +89,7 @@ const Transactions = () => {
                 <CardTitle>Active Subscriptions</CardTitle>
               </CardHeader>
               <CardContent>
-                <SubscriptionsTracker />
+                <SubscriptionsTracker key={refreshTrigger} />
               </CardContent>
             </Card>
           </TabsContent>
@@ -95,7 +99,10 @@ const Transactions = () => {
       <AddTransactionDialog 
         open={showAddTransaction} 
         onOpenChange={setShowAddTransaction}
-        onTransactionAdded={() => setShowAddTransaction(false)}
+        onTransactionAdded={() => {
+          setShowAddTransaction(false);
+          handleDataRefresh();
+        }}
       />
     </div>
   );
