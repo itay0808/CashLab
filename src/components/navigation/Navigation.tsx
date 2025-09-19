@@ -7,7 +7,6 @@ import {
   CreditCard, 
   Receipt, 
   Calculator, 
-  Target, 
   TrendingUp, 
   BarChart3, 
   Repeat,
@@ -27,7 +26,6 @@ const navigation = [
   { name: "Accounts", href: "/accounts", icon: CreditCard },
   { name: "Transactions", href: "/transactions", icon: Receipt },
   { name: "Budgets", href: "/budgets", icon: Calculator },
-  { name: "Goals", href: "/goals", icon: Target },
 ];
 
 export const Navigation = () => {

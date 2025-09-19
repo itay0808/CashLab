@@ -6,7 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/hooks/useAuth";
 import Dashboard from "./pages/Dashboard";
 import Auth from "./pages/Auth";
-import Goals from "./pages/Goals";
+
 import Budgets from "./pages/Budgets";
 
 import Accounts from "./pages/Accounts";
@@ -28,7 +28,7 @@ const App = () => (
             <Route path="/accounts" element={<Accounts />} />
             <Route path="/transactions" element={<Transactions />} />
             <Route path="/budgets" element={<Budgets />} />
-            <Route path="/goals" element={<Goals />} />
+            
             <Route path="*" element={<NotFound />} />
           </Routes>
         </AuthProvider>

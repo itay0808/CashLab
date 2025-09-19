@@ -4,7 +4,7 @@ import { Navigation } from "@/components/navigation/Navigation";
 import { AccountBalance } from "@/components/dashboard/AccountBalance";
 import { SpendingChart } from "@/components/dashboard/SpendingChart";
 import { SubscriptionsTracker } from "@/components/dashboard/SubscriptionsTracker";
-import { SavingsGoal } from "@/components/dashboard/SavingsGoal";
+
 import { TransactionsList } from "@/components/dashboard/TransactionsList";
 import { TransactionCalendar } from "@/components/dashboard/TransactionCalendar";
 import { BudgetOverview } from "@/components/budget/BudgetOverview";
@@ -55,13 +55,8 @@ const Dashboard = () => {
         </div>
 
         {/* Financial Overview Row */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6">
-          <div className="lg:col-span-2">
-            <AccountBalance key={refreshTrigger} />
-          </div>
-          <div>
-            <SavingsGoal key={refreshTrigger} />
-          </div>
+        <div className="space-y-4">
+          <AccountBalance key={refreshTrigger} />
         </div>
 
         {/* Budget Section */}

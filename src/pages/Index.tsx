@@ -5,13 +5,10 @@ import { Header } from "@/components/dashboard/Header";
 import { AccountBalance } from "@/components/dashboard/AccountBalance";
 import { TransactionsList } from "@/components/dashboard/TransactionsList";
 import { SubscriptionsTracker } from "@/components/dashboard/SubscriptionsTracker";
-import { SavingsGoal } from "@/components/dashboard/SavingsGoal";
 import { SpendingChart } from "@/components/dashboard/SpendingChart";
 import { AddTransactionDialog } from "@/components/transaction/AddTransactionDialog";
 import { AddAccountDialog } from "@/components/account/AddAccountDialog";
 import { BudgetManagementDialog } from "@/components/budget/BudgetManagementDialog";
-import { SavingsGoalsOverview } from "@/components/goals/SavingsGoalsOverview";
-import { CashFlowForecast } from "@/components/goals/CashFlowForecast";
 import { Button } from "@/components/ui/button";
 import { Plus, Calculator } from "lucide-react";
 
@@ -70,14 +67,9 @@ const Index = () => {
           </Button>
         </div>
 
-        {/* Top Row - Account Balance and Quick Stats */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div className="lg:col-span-2">
-            <AccountBalance key={refreshTrigger} />
-          </div>
-          <div>
-            <SavingsGoal />
-          </div>
+        {/* Top Row - Account Balance */}
+        <div className="space-y-6">
+          <AccountBalance key={refreshTrigger} />
         </div>
 
         {/* Middle Row - Spending Chart and Subscriptions */}
@@ -86,11 +78,6 @@ const Index = () => {
           <SubscriptionsTracker />
         </div>
 
-        {/* Goals & Cash Flow Section */}
-        <div className="space-y-6">
-          <SavingsGoalsOverview />
-          <CashFlowForecast />
-        </div>
 
         {/* Bottom Row - Recent Transactions */}
         <div className="grid grid-cols-1 gap-6">
