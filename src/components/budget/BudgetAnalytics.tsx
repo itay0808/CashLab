@@ -4,7 +4,7 @@ import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Cell } from 'recharts';
-import { TrendingDown, Calendar, AlertCircle, TrendingUp, Eye, EyeOff } from "lucide-react";
+import { TrendingDown, Calendar, AlertCircle, TrendingUp } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
@@ -28,7 +28,7 @@ export const BudgetAnalytics = ({ refreshTrigger = 0 }: BudgetAnalyticsProps) =>
   const [currentMonth, setCurrentMonth] = useState(new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' }));
   const [currentBalance, setCurrentBalance] = useState(0);
   const [projectedEndBalance, setProjectedEndBalance] = useState(0);
-  const [showProjectedBalance, setShowProjectedBalance] = useState(true);
+  
   const { toast } = useToast();
   const { user } = useAuth();
 
@@ -220,20 +220,10 @@ export const BudgetAnalytics = ({ refreshTrigger = 0 }: BudgetAnalyticsProps) =>
                   <p className="text-lg font-semibold">{formatCurrency(currentBalance)}</p>
                 </div>
                 <div className="bg-gradient-card p-4 rounded-lg">
-                  <div className="flex items-center justify-between mb-1">
-                    <p className="text-sm text-muted-foreground">Projected End-of-Month</p>
-                    <Button 
-                      variant="ghost" 
-                      size="sm" 
-                      onClick={() => setShowProjectedBalance(!showProjectedBalance)}
-                      className="h-6 w-6 p-0"
-                    >
-                      {showProjectedBalance ? <EyeOff className="h-3 w-3" /> : <Eye className="h-3 w-3" />}
-                    </Button>
-                  </div>
+                  <p className="text-sm text-muted-foreground">Projected End-of-Month</p>
                   <div className="flex items-center gap-2">
                     <p className="text-lg font-semibold">
-                      {showProjectedBalance ? formatCurrency(projectedEndBalance) : "••••••"}
+                      {formatCurrency(projectedEndBalance)}
                     </p>
                     <div className={`flex items-center gap-1 text-xs px-2 py-1 rounded-full ${
                       isPositiveProjection ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-700'
@@ -243,7 +233,7 @@ export const BudgetAnalytics = ({ refreshTrigger = 0 }: BudgetAnalyticsProps) =>
                       ) : (
                         <TrendingDown className="h-3 w-3" />
                       )}
-                      {showProjectedBalance && formatCurrency(Math.abs(balanceDifference))}
+                      {formatCurrency(Math.abs(balanceDifference))}
                     </div>
                   </div>
                 </div>

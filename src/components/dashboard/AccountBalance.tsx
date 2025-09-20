@@ -1,5 +1,5 @@
 import { Card } from "@/components/ui/card";
-import { Eye, EyeOff, TrendingUp, TrendingDown, ArrowUpDown, Wallet, PiggyBank } from "lucide-react";
+import { TrendingUp, TrendingDown, ArrowUpDown, Wallet, PiggyBank } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -24,7 +24,7 @@ interface SavingsAccount {
 }
 
 export const AccountBalance = () => {
-  const [showBalance, setShowBalance] = useState(true);
+  
   const [mainAccount, setMainAccount] = useState<MainAccount | null>(null);
   const [savingsAccount, setSavingsAccount] = useState<SavingsAccount | null>(null);
   const [loading, setLoading] = useState(true);
@@ -156,16 +156,8 @@ export const AccountBalance = () => {
               </div>
               <div className="flex items-center gap-3 sm:gap-4">
                 <span className={`${isMobile ? 'text-2xl' : 'text-4xl md:text-5xl'} font-bold tracking-tight`}>
-                  {showBalance ? `₪${totalBalance.toLocaleString('he-IL', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}` : "••••••••"}
+                  ₪{totalBalance.toLocaleString('he-IL', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
                 </span>
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
-                  onClick={() => setShowBalance(!showBalance)}
-                  className="text-primary-foreground/80 hover:text-primary-foreground hover:bg-primary-foreground/10 rounded-full"
-                >
-                  {showBalance ? <EyeOff className="h-4 w-4 sm:h-5 sm:w-5" /> : <Eye className="h-4 w-4 sm:h-5 sm:w-5" />}
-                </Button>
               </div>
             </div>
             <div className={`${isMobile ? 'self-start' : 'text-right'}`}>
@@ -193,7 +185,7 @@ export const AccountBalance = () => {
               </div>
               <div className="space-y-1">
                 <div className={`${isMobile ? 'text-lg' : 'text-xl'} font-bold text-primary-foreground`}>
-                  {showBalance ? `₪${(mainAccount?.balance || 0).toLocaleString('he-IL', { minimumFractionDigits: 0 })}` : "••••••"}
+                  ₪{(mainAccount?.balance || 0).toLocaleString('he-IL', { minimumFractionDigits: 0 })}
                 </div>
                 <div className="text-xs text-primary-foreground/60 capitalize font-medium">
                   Checking • ILS
@@ -213,7 +205,7 @@ export const AccountBalance = () => {
               </div>
               <div className="space-y-1">
                 <div className={`${isMobile ? 'text-lg' : 'text-xl'} font-bold text-primary-foreground`}>
-                  {showBalance ? `₪${(savingsAccount?.balance || 0).toLocaleString('he-IL', { minimumFractionDigits: 0 })}` : "••••••"}
+                  ₪{(savingsAccount?.balance || 0).toLocaleString('he-IL', { minimumFractionDigits: 0 })}
                 </div>
                 <div className="text-xs text-primary-foreground/60 capitalize font-medium">
                   Savings • ILS
