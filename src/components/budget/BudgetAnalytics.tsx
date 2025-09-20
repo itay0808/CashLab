@@ -4,9 +4,11 @@ import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Cell } from 'recharts';
-import { TrendingDown, Calendar, AlertCircle } from "lucide-react";
+import { TrendingDown, Calendar, AlertCircle, TrendingUp, Eye, EyeOff } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/hooks/useAuth";
+import { startOfMonth, endOfMonth, addMonths } from "date-fns";
 
 interface SpendingData {
   category: string;
@@ -24,11 +26,91 @@ export const BudgetAnalytics = ({ refreshTrigger = 0 }: BudgetAnalyticsProps) =>
   const [spendingData, setSpendingData] = useState<SpendingData[]>([]);
   const [loading, setLoading] = useState(true);
   const [currentMonth, setCurrentMonth] = useState(new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' }));
+  const [currentBalance, setCurrentBalance] = useState(0);
+  const [projectedEndBalance, setProjectedEndBalance] = useState(0);
+  const [showProjectedBalance, setShowProjectedBalance] = useState(true);
   const { toast } = useToast();
+  const { user } = useAuth();
 
   useEffect(() => {
     fetchSpendingAnalytics();
+    fetchBalanceProjections();
   }, [refreshTrigger]);
+
+  const fetchBalanceProjections = async () => {
+    try {
+      if (!user) return;
+
+      const now = new Date();
+      const monthStart = startOfMonth(now);
+      const monthEnd = endOfMonth(now);
+
+      // Get main account
+      const { data: mainAccount, error: accountError } = await supabase
+        .from('accounts')
+        .select('id')
+        .eq('user_id', user.id)
+        .eq('type', 'checking')
+        .eq('is_active', true)
+        .single();
+
+      if (accountError) throw accountError;
+
+      // Calculate current balance from past transactions only
+      const { data: pastTransactions, error: pastError } = await supabase
+        .from('transactions')
+        .select('amount')
+        .eq('account_id', mainAccount.id)
+        .lte('transaction_date', now.toISOString());
+
+      if (pastError) throw pastError;
+
+      const currentBalance = (pastTransactions || []).reduce((sum, transaction) => {
+        return sum + transaction.amount;
+      }, 0);
+
+      // Get future transactions until end of month
+      const { data: futureTransactions, error: futureError } = await supabase
+        .from('transactions')
+        .select('amount')
+        .eq('account_id', mainAccount.id)
+        .gt('transaction_date', now.toISOString())
+        .lte('transaction_date', monthEnd.toISOString());
+
+      if (futureError) throw futureError;
+
+      // Get recurring transactions for rest of month
+      const { data: recurringTransactions, error: recurringError } = await supabase
+        .from('recurring_transactions')
+        .select('amount, next_due_date, frequency')
+        .eq('user_id', user.id)
+        .eq('is_active', true)
+        .lte('next_due_date', monthEnd.toISOString());
+
+      if (recurringError) throw recurringError;
+
+      // Calculate projected recurring transactions for rest of month
+      let projectedRecurringAmount = 0;
+      (recurringTransactions || []).forEach(recurring => {
+        const nextDue = new Date(recurring.next_due_date);
+        if (nextDue > now && nextDue <= monthEnd) {
+          projectedRecurringAmount += recurring.amount;
+        }
+      });
+
+      const futureAmount = (futureTransactions || []).reduce((sum, transaction) => {
+        return sum + transaction.amount;
+      }, 0);
+
+      const projectedBalance = currentBalance + futureAmount + projectedRecurringAmount;
+
+      setCurrentBalance(currentBalance);
+      setProjectedEndBalance(projectedBalance);
+
+    } catch (error) {
+      console.error('Error fetching balance projections:', error);
+    }
+  };
 
   const fetchSpendingAnalytics = async () => {
     try {
@@ -48,18 +130,19 @@ export const BudgetAnalytics = ({ refreshTrigger = 0 }: BudgetAnalyticsProps) =>
       if (error) throw error;
 
       const analytics = (data || []).map(period => ({
-        category: period.budget?.category?.name || 'Unknown',
+        category: period.budget?.category?.name || period.budget?.name || 'Unknown',
         budgeted: period.budgeted_amount,
         spent: period.spent_amount,
         icon: period.budget?.category?.icon || '📊',
-        alertThreshold: period.budget?.alert_threshold || 80,
+        alertThreshold: period.budget?.alert_threshold || 80
       }));
 
       setSpendingData(analytics);
     } catch (error) {
+      console.error('Error fetching spending analytics:', error);
       toast({
         title: "Error",
-        description: "Failed to load budget analytics",
+        description: "Failed to load spending analytics",
         variant: "destructive",
       });
     } finally {
@@ -70,30 +153,28 @@ export const BudgetAnalytics = ({ refreshTrigger = 0 }: BudgetAnalyticsProps) =>
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('he-IL', {
       style: 'currency',
-      currency: 'ILS',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
+      currency: 'ILS'
     }).format(amount);
   };
 
   const getBarColor = (spent: number, budgeted: number, alertThreshold: number) => {
     const percentage = (spent / budgeted) * 100;
-    if (percentage >= 100) return '#ef4444'; // red-500
-    if (percentage >= alertThreshold) return '#f59e0b'; // amber-500
-    return '#10b981'; // emerald-500
+    if (percentage >= 100) return '#ef4444';
+    if (percentage >= alertThreshold) return '#f59e0b';
+    return '#10b981';
   };
 
-  const totalBudgeted = spendingData.reduce((sum, item) => sum + item.budgeted, 0);
-  const totalSpent = spendingData.reduce((sum, item) => sum + item.spent, 0);
-  const overallPercentage = totalBudgeted > 0 ? (totalSpent / totalBudgeted) * 100 : 0;
+  const getTotalBudgeted = () => spendingData.reduce((sum, item) => sum + item.budgeted, 0);
+  const getTotalSpent = () => spendingData.reduce((sum, item) => sum + item.spent, 0);
+  const getOverBudgetCount = () => spendingData.filter(item => item.spent >= item.budgeted).length;
 
   if (loading) {
     return (
       <Card className="shadow-card border-border/50">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <BarChart className="h-5 w-5" />
-            Budget vs Spending
+            <TrendingDown className="h-5 w-5" />
+            Budget Analytics
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -103,74 +184,105 @@ export const BudgetAnalytics = ({ refreshTrigger = 0 }: BudgetAnalyticsProps) =>
     );
   }
 
+  const balanceDifference = projectedEndBalance - currentBalance;
+  const isPositiveProjection = balanceDifference >= 0;
+
   return (
     <Card className="shadow-card border-border/50">
       <CardHeader>
         <div className="flex items-center justify-between">
           <div>
             <CardTitle className="flex items-center gap-2">
-              <BarChart className="h-5 w-5" />
-              Budget vs Spending
+              <TrendingDown className="h-5 w-5" />
+              Budget Analytics
             </CardTitle>
-            <CardDescription className="flex items-center gap-2 mt-1">
-              <Calendar className="h-4 w-4" />
-              {currentMonth}
-            </CardDescription>
-          </div>
-          <div className="text-right">
-            <div className={`text-lg font-bold ${
-              overallPercentage >= 100 ? 'text-danger' : 
-              overallPercentage >= 80 ? 'text-warning' : 'text-success'
-            }`}>
-              {overallPercentage.toFixed(1)}%
-            </div>
-            <p className="text-xs text-muted-foreground">of budget used</p>
+            <CardDescription>Spending analysis for {currentMonth}</CardDescription>
           </div>
         </div>
       </CardHeader>
       <CardContent>
         {spendingData.length === 0 ? (
-          <div className="text-center py-8 text-muted-foreground">
-            No budget data available. Create some budgets to see analytics.
+          <div className="text-center py-8">
+            <Calendar className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+            <h3 className="text-lg font-medium mb-2">No budgets to analyze</h3>
+            <p className="text-muted-foreground">
+              Create budgets to see detailed spending analytics
+            </p>
           </div>
         ) : (
           <div className="space-y-6">
-            {/* Overall Progress */}
-            <div className="space-y-2">
-              <div className="flex justify-between text-sm">
-                <span className="font-medium">Overall Progress</span>
-                <span className="text-muted-foreground">
-                  {formatCurrency(totalSpent)} / {formatCurrency(totalBudgeted)}
-                </span>
-              </div>
-              <Progress 
-                value={Math.min(overallPercentage, 100)} 
-                className="h-3" 
-              />
-              {overallPercentage >= 80 && (
-                <div className="flex items-center gap-2 text-sm text-warning">
-                  <AlertCircle className="h-4 w-4" />
-                  <span>High spending detected across budgets</span>
+            {/* Balance Projections */}
+            <div className="space-y-4">
+              <h4 className="font-medium text-sm text-muted-foreground">Balance Projections</h4>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="bg-gradient-card p-4 rounded-lg">
+                  <p className="text-sm text-muted-foreground">Current Balance</p>
+                  <p className="text-lg font-semibold">{formatCurrency(currentBalance)}</p>
                 </div>
-              )}
+                <div className="bg-gradient-card p-4 rounded-lg">
+                  <div className="flex items-center justify-between mb-1">
+                    <p className="text-sm text-muted-foreground">Projected End-of-Month</p>
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      onClick={() => setShowProjectedBalance(!showProjectedBalance)}
+                      className="h-6 w-6 p-0"
+                    >
+                      {showProjectedBalance ? <EyeOff className="h-3 w-3" /> : <Eye className="h-3 w-3" />}
+                    </Button>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <p className="text-lg font-semibold">
+                      {showProjectedBalance ? formatCurrency(projectedEndBalance) : "••••••"}
+                    </p>
+                    <div className={`flex items-center gap-1 text-xs px-2 py-1 rounded-full ${
+                      isPositiveProjection ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-700'
+                    }`}>
+                      {isPositiveProjection ? (
+                        <TrendingUp className="h-3 w-3" />
+                      ) : (
+                        <TrendingDown className="h-3 w-3" />
+                      )}
+                      {showProjectedBalance && formatCurrency(Math.abs(balanceDifference))}
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
 
-            {/* Chart */}
-            <div className="h-64 w-full">
-              <ResponsiveContainer width="100%" height="100%">
+            {/* Summary Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="bg-gradient-card p-4 rounded-lg">
+                <p className="text-sm text-muted-foreground">Total Budgeted</p>
+                <p className="text-lg font-semibold">{formatCurrency(getTotalBudgeted())}</p>
+              </div>
+              <div className="bg-gradient-card p-4 rounded-lg">
+                <p className="text-sm text-muted-foreground">Total Spent</p>
+                <p className="text-lg font-semibold">{formatCurrency(getTotalSpent())}</p>
+              </div>
+              <div className="bg-gradient-card p-4 rounded-lg">
+                <p className="text-sm text-muted-foreground">Over Budget</p>
+                <p className={`text-lg font-semibold ${getOverBudgetCount() > 0 ? 'text-danger' : 'text-success'}`}>
+                  {getOverBudgetCount()} categories
+                </p>
+              </div>
+            </div>
+
+            {/* Spending Chart */}
+            <div className="space-y-4">
+              <h4 className="font-medium text-sm text-muted-foreground">Category Spending</h4>
+              <ResponsiveContainer width="100%" height={300}>
                 <BarChart data={spendingData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
                   <CartesianGrid strokeDasharray="3 3" className="opacity-30" />
                   <XAxis 
                     dataKey="category" 
                     tick={{ fontSize: 12 }}
-                    interval={0}
                     angle={-45}
                     textAnchor="end"
                     height={80}
                   />
-                  <YAxis tick={{ fontSize: 12 }} tickFormatter={formatCurrency} />
-                  <Bar dataKey="budgeted" fill="#e5e7eb" name="Budgeted" />
-                  <Bar dataKey="spent" name="Spent">
+                  <YAxis tick={{ fontSize: 12 }} />
+                  <Bar dataKey="spent" radius={[4, 4, 0, 0]}>
                     {spendingData.map((entry, index) => (
                       <Cell 
                         key={`cell-${index}`} 
@@ -182,46 +294,55 @@ export const BudgetAnalytics = ({ refreshTrigger = 0 }: BudgetAnalyticsProps) =>
               </ResponsiveContainer>
             </div>
 
-            {/* Category Breakdown */}
-            <div className="space-y-3">
-              <h4 className="font-medium text-sm text-muted-foreground">Category Details</h4>
+            {/* Detailed Breakdown */}
+            <div className="space-y-4">
+              <h4 className="font-medium text-sm text-muted-foreground">Detailed Breakdown</h4>
               {spendingData.map((item, index) => {
                 const percentage = (item.spent / item.budgeted) * 100;
-                const remaining = item.budgeted - item.spent;
+                const isOverBudget = percentage >= 100;
+                const isNearLimit = percentage >= item.alertThreshold;
                 
                 return (
-                  <div key={index} className="flex items-center justify-between p-3 rounded-lg bg-card-subtle">
-                    <div className="flex items-center gap-3">
-                      <span className="text-lg">{item.icon}</span>
-                      <div>
-                        <p className="font-medium text-sm">{item.category}</p>
-                        <p className="text-xs text-muted-foreground">
-                          {formatCurrency(item.spent)} of {formatCurrency(item.budgeted)}
-                        </p>
+                  <div key={index} className="space-y-2 p-4 rounded-lg bg-card-subtle border">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <span className="text-lg">{item.icon}</span>
+                        <span className="font-medium">{item.category}</span>
                       </div>
-                    </div>
-                    <div className="text-right flex items-center gap-3">
-                      <div className="text-xs">
-                        {percentage >= 100 ? (
-                          <Badge variant="destructive" className="text-xs">
-                            {formatCurrency(Math.abs(remaining))} over
-                          </Badge>
-                        ) : percentage >= item.alertThreshold ? (
+                      <div className="flex items-center gap-2">
+                        {isOverBudget && <AlertCircle className="h-4 w-4 text-danger" />}
+                        {!isOverBudget && isNearLimit && (
                           <Badge variant="secondary" className="bg-warning/10 text-warning text-xs">
-                            {formatCurrency(remaining)} left
+                            Near Limit
                           </Badge>
-                        ) : (
+                        )}
+                        {!isNearLimit && (
                           <Badge variant="secondary" className="bg-success/10 text-success text-xs">
-                            {formatCurrency(remaining)} left
+                            On Track
                           </Badge>
                         )}
                       </div>
-                      <div className={`font-semibold text-sm ${
-                        percentage >= 100 ? 'text-danger' : 
-                        percentage >= item.alertThreshold ? 'text-warning' : 'text-success'
-                      }`}>
-                        {percentage.toFixed(0)}%
-                      </div>
+                    </div>
+                    
+                    <Progress 
+                      value={Math.min(percentage, 100)} 
+                      className="h-2"
+                    />
+                    
+                    <div className="flex justify-between text-sm">
+                      <span className={isOverBudget ? 'text-danger' : 'text-muted-foreground'}>
+                        Spent: {formatCurrency(item.spent)}
+                      </span>
+                      <span className="text-muted-foreground">
+                        Budget: {formatCurrency(item.budgeted)}
+                      </span>
+                    </div>
+                    
+                    <div className="text-xs text-muted-foreground">
+                      {isOverBudget 
+                        ? `Over budget by ${formatCurrency(item.spent - item.budgeted)}`
+                        : `${formatCurrency(item.budgeted - item.spent)} remaining`
+                      }
                     </div>
                   </div>
                 );

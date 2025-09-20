@@ -77,7 +77,30 @@ export const AccountBalance = () => {
         throw savingsError;
       }
 
-      setMainAccount(mainAccountData);
+      // Calculate actual balance based on past transactions only
+      let calculatedMainBalance = 0;
+      if (mainAccountData) {
+        const { data: pastTransactions, error: transError } = await supabase
+          .from('transactions')
+          .select('amount')
+          .eq('account_id', mainAccountData.id)
+          .lte('transaction_date', new Date().toISOString());
+
+        if (transError) throw transError;
+
+        calculatedMainBalance = (pastTransactions || []).reduce((sum, transaction) => {
+          return sum + transaction.amount;
+        }, 0);
+
+        // Update the main account balance in our state
+        setMainAccount({
+          ...mainAccountData,
+          balance: calculatedMainBalance
+        });
+      } else {
+        setMainAccount(null);
+      }
+
       setSavingsAccount(savingsAccountData);
     } catch (error) {
       console.error('Error fetching account data:', error);
