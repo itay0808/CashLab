@@ -37,6 +37,20 @@ export const BudgetAnalytics = ({ refreshTrigger = 0 }: BudgetAnalyticsProps) =>
     fetchBalanceProjections();
   }, [refreshTrigger]);
 
+  // Listen for transaction changes to refresh analytics
+  useEffect(() => {
+    const handleRefresh = () => {
+      fetchSpendingAnalytics();
+      fetchBalanceProjections();
+    };
+    window.addEventListener('refreshTransactions', handleRefresh);
+    window.addEventListener('refreshBalances', handleRefresh);
+    return () => {
+      window.removeEventListener('refreshTransactions', handleRefresh);
+      window.removeEventListener('refreshBalances', handleRefresh);
+    };
+  }, []);
+
   const fetchBalanceProjections = async () => {
     try {
       if (!user) return;

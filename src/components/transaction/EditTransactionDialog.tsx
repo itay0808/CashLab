@@ -99,6 +99,10 @@ export const EditTransactionDialog = ({ open, onOpenChange, transaction, onTrans
       
       onTransactionUpdated();
       onOpenChange(false);
+      
+      // Trigger refresh events for all financial components
+      window.dispatchEvent(new CustomEvent('refreshBalances'));
+      window.dispatchEvent(new CustomEvent('refreshTransactions'));
 
     } catch (error) {
       console.error('Transaction update error:', error);

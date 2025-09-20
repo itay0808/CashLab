@@ -25,6 +25,17 @@ export const SpendingChart = () => {
     fetchBudgetSummary();
   }, []);
 
+  // Listen for transaction changes to refresh budget data
+  useEffect(() => {
+    const handleRefresh = () => fetchBudgetSummary();
+    window.addEventListener('refreshTransactions', handleRefresh);
+    window.addEventListener('refreshBalances', handleRefresh);
+    return () => {
+      window.removeEventListener('refreshTransactions', handleRefresh);
+      window.removeEventListener('refreshBalances', handleRefresh);
+    };
+  }, []);
+
   const fetchBudgetSummary = async () => {
     try {
       const { data, error } = await supabase

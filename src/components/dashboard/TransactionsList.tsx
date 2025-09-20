@@ -105,6 +105,9 @@ export const TransactionsList = () => {
       });
       
       fetchTransactions();
+      // Trigger refresh events for other components
+      window.dispatchEvent(new CustomEvent('refreshBalances'));
+      window.dispatchEvent(new CustomEvent('refreshTransactions'));
     } catch (error) {
       toast({
         title: "Error", 
