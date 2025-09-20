@@ -4,9 +4,9 @@ import { Navigation } from "@/components/navigation/Navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Plus, Receipt, CreditCard } from "lucide-react";
+import { Plus, Receipt } from "lucide-react";
 import { TransactionsList } from "@/components/dashboard/TransactionsList";
-import { SubscriptionsTracker } from "@/components/dashboard/SubscriptionsTracker";
+
 import { RecurringTransactionsList } from "@/components/recurring/RecurringTransactionsList";
 import { AddTransactionDialog } from "@/components/transaction/AddTransactionDialog";
 import { useState } from "react";
@@ -41,7 +41,7 @@ const Transactions = () => {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold">Transactions</h1>
-            <p className="text-muted-foreground">Manage all your transactions and subscriptions</p>
+            <p className="text-muted-foreground">Manage all your transactions and recurring payments</p>
           </div>
           <Button onClick={() => setShowAddTransaction(true)}>
             <Plus className="h-4 w-4 mr-2" />
@@ -50,14 +50,10 @@ const Transactions = () => {
         </div>
 
         <Tabs defaultValue="transactions" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-2">
+          <TabsList className="grid w-full grid-cols-1">
             <TabsTrigger value="transactions" className="gap-2">
               <Receipt className="h-4 w-4" />
               All Transactions
-            </TabsTrigger>
-            <TabsTrigger value="subscriptions" className="gap-2">
-              <CreditCard className="h-4 w-4" />
-              Subscriptions
             </TabsTrigger>
           </TabsList>
 
@@ -83,16 +79,6 @@ const Transactions = () => {
             </div>
           </TabsContent>
 
-          <TabsContent value="subscriptions">
-            <Card>
-              <CardHeader>
-                <CardTitle>Active Subscriptions</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <SubscriptionsTracker key={refreshTrigger} />
-              </CardContent>
-            </Card>
-          </TabsContent>
         </Tabs>
       </main>
 

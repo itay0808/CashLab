@@ -203,17 +203,15 @@ export const CalendarWithClock = () => {
   const getTransactionTypeColor = (type: string) => {
     switch (type) {
       case 'income':
-        return 'bg-success/30 text-success-foreground border-success/50 shadow-sm';
+        return 'bg-emerald-100 text-emerald-800 border-emerald-300 shadow-sm ring-1 ring-emerald-200';
       case 'recurring_income':
-        return 'bg-success/40 text-success-foreground border-success/60 shadow-sm ring-1 ring-success/20';
+        return 'bg-emerald-50 text-emerald-700 border-emerald-400 shadow-md ring-2 ring-emerald-300';
       case 'expense':
-        return 'bg-destructive/30 text-destructive-foreground border-destructive/50 shadow-sm';
+        return 'bg-red-100 text-red-800 border-red-300 shadow-sm ring-1 ring-red-200';
       case 'recurring_expense':
-        return 'bg-destructive/40 text-destructive-foreground border-destructive/60 shadow-sm ring-1 ring-destructive/20';
-      case 'subscription':
-        return 'bg-warning/40 text-warning-foreground border-warning/60 shadow-sm ring-1 ring-warning/30';
+        return 'bg-red-50 text-red-700 border-red-400 shadow-md ring-2 ring-red-300';
       default:
-        return 'bg-muted/30 text-muted-foreground border-muted/50';
+        return 'bg-gray-100 text-gray-700 border-gray-300 shadow-sm';
     }
   };
 
@@ -374,7 +372,7 @@ export const CalendarWithClock = () => {
                   {day.recurringTransactions.slice(0, 1).map(recurring => (
                     <div
                       key={`recurring-${recurring.id}`}
-                      className="text-xs px-1 sm:px-2 py-1 rounded border bg-warning/10 text-warning border-warning/20"
+                      className="text-xs px-1 sm:px-2 py-1 rounded border bg-blue-100 text-blue-800 border-blue-300 ring-1 ring-blue-200"
                       title={`${recurring.name} - ${formatCurrency(recurring.amount)} (${recurring.frequency})`}
                     >
                       {isMobile ? (
@@ -410,15 +408,15 @@ export const CalendarWithClock = () => {
         {/* Legend */}
         <div className="flex items-center justify-center gap-3 sm:gap-6 pt-4 border-t border-border/50">
           <div className="flex items-center gap-2">
-            <div className="w-3 h-3 rounded bg-success/20 border border-success/30"></div>
+            <div className="w-3 h-3 rounded bg-emerald-100 border border-emerald-300"></div>
             <span className="text-xs sm:text-sm text-muted-foreground">Income</span>
           </div>
           <div className="flex items-center gap-2">
-            <div className="w-3 h-3 rounded bg-danger/20 border border-danger/30"></div>
+            <div className="w-3 h-3 rounded bg-red-100 border border-red-300"></div>
             <span className="text-xs sm:text-sm text-muted-foreground">Expense</span>
           </div>
           <div className="flex items-center gap-2">
-            <div className="w-3 h-3 rounded bg-warning/20 border border-warning/30"></div>
+            <div className="w-3 h-3 rounded bg-blue-100 border border-blue-300"></div>
             <span className="text-xs sm:text-sm text-muted-foreground">Recurring</span>
           </div>
         </div>

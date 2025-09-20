@@ -3,7 +3,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { Navigation } from "@/components/navigation/Navigation";
 import { AccountBalance } from "@/components/dashboard/AccountBalance";
 import { SpendingChart } from "@/components/dashboard/SpendingChart";
-import { SubscriptionsTracker } from "@/components/dashboard/SubscriptionsTracker";
+import { RecurringTransactionsList } from "@/components/recurring/RecurringTransactionsList";
 import { CalendarWithClock } from "@/components/dashboard/CalendarWithClock";
 import { TransactionsList } from "@/components/dashboard/TransactionsList";
 import { BudgetOverview } from "@/components/budget/BudgetOverview";
@@ -64,7 +64,7 @@ const Dashboard = () => {
         {/* Analytics Row */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
           <SpendingChart key={refreshTrigger} />
-          <SubscriptionsTracker key={refreshTrigger} />
+          <RecurringTransactionsList key={refreshTrigger} />
         </div>
 
         {/* Recent Activity Section */}

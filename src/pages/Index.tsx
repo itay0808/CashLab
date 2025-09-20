@@ -4,7 +4,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { Header } from "@/components/dashboard/Header";
 import { AccountBalance } from "@/components/dashboard/AccountBalance";
 import { TransactionsList } from "@/components/dashboard/TransactionsList";
-import { SubscriptionsTracker } from "@/components/dashboard/SubscriptionsTracker";
+import { RecurringTransactionsList } from "@/components/recurring/RecurringTransactionsList";
 import { SpendingChart } from "@/components/dashboard/SpendingChart";
 import { AddTransactionDialog } from "@/components/transaction/AddTransactionDialog";
 import { BudgetManagementDialog } from "@/components/budget/BudgetManagementDialog";
@@ -65,7 +65,7 @@ const Index = () => {
         {/* Middle Row - Spending Chart and Subscriptions */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <SpendingChart key={refreshTrigger} />
-          <SubscriptionsTracker />
+          <RecurringTransactionsList key={refreshTrigger} />
         </div>
 
 

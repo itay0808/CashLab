@@ -27,7 +27,6 @@ export const AddTransactionDialog = ({ open, onOpenChange, onTransactionAdded }:
   const [categories, setCategories] = useState<Category[]>([]);
   const [transactionType, setTransactionType] = useState('expense');
   const [recurring, setRecurring] = useState('no');
-  const [subscriptionDuration, setSubscriptionDuration] = useState('endless');
   const { toast } = useToast();
   const isMobile = useIsMobile();
 
@@ -187,7 +186,6 @@ export const AddTransactionDialog = ({ open, onOpenChange, onTransactionAdded }:
               <SelectContent>
                 <SelectItem value="expense">Expense</SelectItem>
                 <SelectItem value="income">Income</SelectItem>
-                <SelectItem value="subscription">Subscription</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -254,73 +252,35 @@ export const AddTransactionDialog = ({ open, onOpenChange, onTransactionAdded }:
             />
           </div>
 
-          {/* Conditional recurring options for expense/income */}
-          {(transactionType === 'expense' || transactionType === 'income') && (
+          {/* Recurring options for expense/income */}
+          <div className="space-y-2">
+            <Label htmlFor="recurring">Make Recurring</Label>
+            <Select name="recurring" value={recurring} onValueChange={setRecurring}>
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="no">No</SelectItem>
+                <SelectItem value="daily">Daily</SelectItem>
+                <SelectItem value="weekly">Weekly</SelectItem>
+                <SelectItem value="biweekly">Bi-weekly</SelectItem>
+                <SelectItem value="monthly">Monthly</SelectItem>
+                <SelectItem value="quarterly">Quarterly</SelectItem>
+                <SelectItem value="yearly">Yearly</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          {recurring !== 'no' && (
             <div className="space-y-2">
-              <Label htmlFor="recurring">Make Recurring</Label>
-              <Select name="recurring" value={recurring} onValueChange={setRecurring}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="no">No</SelectItem>
-                  <SelectItem value="daily">Daily</SelectItem>
-                  <SelectItem value="weekly">Weekly</SelectItem>
-                  <SelectItem value="biweekly">Bi-weekly</SelectItem>
-                  <SelectItem value="monthly">Monthly</SelectItem>
-                  <SelectItem value="quarterly">Quarterly</SelectItem>
-                  <SelectItem value="yearly">Yearly</SelectItem>
-                </SelectContent>
-              </Select>
+              <Label htmlFor="recurringEnd">Recurring End Date</Label>
+              <Input
+                id="recurringEnd"
+                name="recurringEnd"
+                type="date"
+                placeholder="Leave empty for endless"
+              />
             </div>
-          )}
-
-          {/* Conditional subscription options */}
-          {transactionType === 'subscription' && (
-            <>
-              <div className="space-y-2">
-                <Label htmlFor="subscriptionDuration">Subscription Duration</Label>
-                <Select name="subscriptionDuration" value={subscriptionDuration} onValueChange={setSubscriptionDuration}>
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="endless">Endless</SelectItem>
-                    <SelectItem value="3months">3 Months</SelectItem>
-                    <SelectItem value="6months">6 Months</SelectItem>
-                    <SelectItem value="custom">Custom Duration</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="subscriptionDay">Monthly Billing Day</Label>
-                <Select name="subscriptionDay" defaultValue="1">
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {Array.from({ length: 31 }, (_, i) => (
-                      <SelectItem key={i + 1} value={(i + 1).toString()}>
-                        {i + 1}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-
-              {subscriptionDuration === 'custom' && (
-                <div className="space-y-2">
-                  <Label htmlFor="customEndDate">Custom End Date</Label>
-                  <Input
-                    id="customEndDate"
-                    name="customEndDate"
-                    type="date"
-                    placeholder="Required for custom duration"
-                  />
-                </div>
-              )}
-            </>
           )}
 
           <div className="flex flex-col gap-3 pt-4">
