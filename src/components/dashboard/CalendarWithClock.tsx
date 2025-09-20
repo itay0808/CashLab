@@ -7,8 +7,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { MobileDatePicker } from "@/components/ui/mobile-date-picker";
-import { DayTransactionsDrawer } from "./DayTransactionsDrawer";
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameDay, isSameMonth, addMonths, subMonths } from "date-fns";
 
 interface Transaction {
@@ -51,8 +49,6 @@ export const CalendarWithClock = () => {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [recurringTransactions, setRecurringTransactions] = useState<RecurringTransaction[]>([]);
   const [loading, setLoading] = useState(true);
-  const [selectedDay, setSelectedDay] = useState<CalendarDay | null>(null);
-  const [showDayDrawer, setShowDayDrawer] = useState(false);
   const { user } = useAuth();
   const { toast } = useToast();
   const isMobile = useIsMobile();
@@ -205,21 +201,26 @@ export const CalendarWithClock = () => {
   };
 
   const getTransactionTypeColor = (type: string) => {
-    return type === 'income' 
-      ? 'bg-success/10 text-success border-success/20' 
-      : 'bg-danger/10 text-danger border-danger/20';
+    switch (type) {
+      case 'income':
+        return 'bg-success/30 text-success-foreground border-success/50 shadow-sm';
+      case 'recurring_income':
+        return 'bg-success/40 text-success-foreground border-success/60 shadow-sm ring-1 ring-success/20';
+      case 'expense':
+        return 'bg-destructive/30 text-destructive-foreground border-destructive/50 shadow-sm';
+      case 'recurring_expense':
+        return 'bg-destructive/40 text-destructive-foreground border-destructive/60 shadow-sm ring-1 ring-destructive/20';
+      case 'subscription':
+        return 'bg-warning/40 text-warning-foreground border-warning/60 shadow-sm ring-1 ring-warning/30';
+      default:
+        return 'bg-muted/30 text-muted-foreground border-muted/50';
+    }
   };
 
   const navigateMonth = (direction: 'prev' | 'next') => {
     setCurrentDate(prev => direction === 'prev' ? subMonths(prev, 1) : addMonths(prev, 1));
   };
 
-  const handleDayClick = (day: CalendarDay) => {
-    if (isMobile && (day.transactions.length > 0 || day.recurringTransactions.length > 0)) {
-      setSelectedDay(day);
-      setShowDayDrawer(true);
-    }
-  };
 
   const formatTime = (date: Date) => {
     return date.toLocaleTimeString('en-US', {
@@ -292,38 +293,17 @@ export const CalendarWithClock = () => {
 
           {/* Navigation */}
           <div className="flex items-center justify-between">
-            {isMobile ? (
-              <>
-                <Button variant="outline" size="sm" onClick={() => navigateMonth('prev')}>
-                  <ChevronLeft className="h-4 w-4" />
-                </Button>
-                
-                <div className="flex-1 mx-3">
-                  <MobileDatePicker 
-                    date={currentDate} 
-                    onDateChange={setCurrentDate}
-                  />
-                </div>
-                
-                <Button variant="outline" size="sm" onClick={() => navigateMonth('next')}>
-                  <ChevronRight className="h-4 w-4" />
-                </Button>
-              </>
-            ) : (
-              <>
-                <Button variant="outline" size="default" onClick={() => navigateMonth('prev')}>
-                  <ChevronLeft className="h-4 w-4" />
-                </Button>
-                
-                <h4 className="text-base sm:text-lg font-semibold">
-                  {format(currentDate, 'MMMM yyyy')}
-                </h4>
-                
-                <Button variant="outline" size="default" onClick={() => navigateMonth('next')}>
-                  <ChevronRight className="h-4 w-4" />
-                </Button>
-              </>
-            )}
+            <Button variant="outline" size="default" onClick={() => navigateMonth('prev')}>
+              <ChevronLeft className="h-4 w-4" />
+            </Button>
+            
+            <h4 className="text-base sm:text-lg font-semibold">
+              {format(currentDate, 'MMMM yyyy')}
+            </h4>
+            
+            <Button variant="outline" size="default" onClick={() => navigateMonth('next')}>
+              <ChevronRight className="h-4 w-4" />
+            </Button>
           </div>
         </div>
 
@@ -343,7 +323,6 @@ export const CalendarWithClock = () => {
             {calendarData.map((day, index) => (
               <div
                 key={index}
-                onClick={() => handleDayClick(day)}
                 className={`${isMobile ? 'min-h-[60px] p-1' : 'min-h-[100px] p-2'} rounded-lg border transition-all hover:shadow-sm ${
                   day.isCurrentMonth 
                     ? 'bg-background border-border/50' 
@@ -351,10 +330,6 @@ export const CalendarWithClock = () => {
                 } ${
                   day.isToday 
                     ? 'ring-2 ring-primary ring-opacity-50' 
-                    : ''
-                } ${
-                  isMobile && (day.transactions.length > 0 || day.recurringTransactions.length > 0)
-                    ? 'cursor-pointer hover:bg-muted/50'
                     : ''
                 }`}
               >
@@ -449,16 +424,6 @@ export const CalendarWithClock = () => {
         </div>
         </div>
 
-        {/* Day Transactions Drawer for Mobile */}
-        {selectedDay && (
-          <DayTransactionsDrawer
-            isOpen={showDayDrawer}
-            onClose={() => setShowDayDrawer(false)}
-            date={selectedDay.date}
-            transactions={selectedDay.transactions}
-            recurringTransactions={selectedDay.recurringTransactions}
-          />
-        )}
       </Card>
     );
 };

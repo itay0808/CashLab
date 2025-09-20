@@ -184,6 +184,9 @@ export const AddTransactionDialog = ({ open, onOpenChange, onTransactionAdded }:
               <SelectContent>
                 <SelectItem value="expense">Expense</SelectItem>
                 <SelectItem value="income">Income</SelectItem>
+                <SelectItem value="recurring_expense">Recurring Expense</SelectItem>
+                <SelectItem value="recurring_income">Recurring Income</SelectItem>
+                <SelectItem value="subscription">Subscription</SelectItem>
               </SelectContent>
             </Select>
           </div>

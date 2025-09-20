@@ -3,7 +3,6 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { useAuth } from "@/hooks/useAuth";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { MobileNavigation } from "./MobileNavigation";
 import { 
   Home, 
   Receipt, 
@@ -41,10 +40,6 @@ export const Navigation = () => {
     return name.split(" ").map(n => n[0]).join("").toUpperCase().slice(0, 2);
   };
 
-  // Show mobile navigation for small screens
-  if (isMobile) {
-    return <MobileNavigation />;
-  }
 
   return (
     <nav className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50">
