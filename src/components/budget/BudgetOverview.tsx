@@ -59,6 +59,21 @@ export const BudgetOverview = ({ onCreateBudget, refreshTrigger }: BudgetOvervie
     fetchBalanceProjections();
   }, [refreshTrigger]);
 
+  // Listen for transaction changes to refresh budgets
+  useEffect(() => {
+    const handleRefresh = () => {
+      fetchBudgetPeriods();
+      fetchSpendingAnalytics();
+      fetchBalanceProjections();
+    };
+    window.addEventListener('refreshTransactions', handleRefresh);
+    window.addEventListener('refreshBalances', handleRefresh);
+    return () => {
+      window.removeEventListener('refreshTransactions', handleRefresh);
+      window.removeEventListener('refreshBalances', handleRefresh);
+    };
+  }, []);
+
   const fetchBalanceProjections = async () => {
     try {
       if (!user) return;

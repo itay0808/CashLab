@@ -71,7 +71,11 @@ export const MergedActivityBox = () => {
   useEffect(() => {
     const handleRefresh = () => refreshData();
     window.addEventListener('refreshTransactions', handleRefresh);
-    return () => window.removeEventListener('refreshTransactions', handleRefresh);
+    window.addEventListener('refreshBalances', handleRefresh);
+    return () => {
+      window.removeEventListener('refreshTransactions', handleRefresh);
+      window.removeEventListener('refreshBalances', handleRefresh);
+    };
   }, []);
 
   const fetchData = async () => {
