@@ -73,16 +73,14 @@ export const AddTransactionDialog = ({ open, onOpenChange, onTransactionAdded }:
       const { data: user } = await supabase.auth.getUser();
       if (!user.user) throw new Error('Not authenticated');
 
-      // Get the user's main account
-      const { data: mainAccount, error: accountError } = await supabase
-        .from('accounts')
-        .select('id')
-        .eq('user_id', user.user.id)
-        .eq('type', 'checking')
-        .eq('is_active', true)
-        .single();
+      // Get or create main account using the new function
+      const { data: balanceData, error: balanceError } = await supabase
+        .rpc('get_account_balances', { user_id_param: user.user.id });
 
-      if (accountError) throw accountError;
+      if (balanceError) throw balanceError;
+
+      const mainAccountId = balanceData?.[0]?.main_account_id;
+      if (!mainAccountId) throw new Error('Failed to create main account');
 
       // Insert transaction (balance will be updated automatically by trigger)
       const { error } = await supabase
@@ -92,7 +90,7 @@ export const AddTransactionDialog = ({ open, onOpenChange, onTransactionAdded }:
           description,
           notes: notes || null,
           category_id: categoryId || null,
-          account_id: mainAccount.id,
+          account_id: mainAccountId,
           type,
           transaction_date: transactionDate,
           user_id: user.user.id,
@@ -133,7 +131,7 @@ export const AddTransactionDialog = ({ open, onOpenChange, onTransactionAdded }:
             start_date: transactionDate,
             end_date: recurringEnd || null,
             next_due_date: nextDueDate.toISOString().split('T')[0],
-            account_id: mainAccount.id,
+            account_id: mainAccountId,
             category_id: categoryId || null,
             notes: notes || null,
             user_id: user.user.id,

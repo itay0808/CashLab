@@ -713,6 +713,15 @@ export type Database = {
           total_value: number
         }[]
       }
+      get_account_balances: {
+        Args: { user_id_param: string }
+        Returns: {
+          main_account_id: string
+          main_balance: number
+          savings_account_id: string
+          savings_balance: number
+        }[]
+      }
       get_or_create_main_account: {
         Args: { user_id_param: string }
         Returns: string

@@ -84,6 +84,7 @@ export const SavingsTransferDialog = ({
       const { data: user } = await supabase.auth.getUser();
       if (!user.user) throw new Error('Not authenticated');
 
+      // Call the transfer function
       const { error } = await supabase.rpc('process_savings_transfer', {
         user_id_param: user.user.id,
         amount_param: transferAmount,
@@ -91,7 +92,10 @@ export const SavingsTransferDialog = ({
         description_param: description || null
       });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Transfer error:', error);
+        throw error;
+      }
 
       toast({
         title: "Success",

@@ -53,55 +53,43 @@ export const AccountBalance = () => {
 
   const fetchAccountData = async () => {
     try {
-      // Fetch main account
-      const { data: mainAccountData, error: mainError } = await supabase
-        .from('accounts')
-        .select('*')
-        .eq('user_id', user?.id)
-        .eq('type', 'checking')
-        .eq('is_active', true)
-        .single();
+      if (!user?.id) return;
 
-      if (mainError && mainError.code !== 'PGRST116') { // PGRST116 is "no rows returned"
-        throw mainError;
-      }
+      // Use the new database function to get accurate balances
+      const { data: balanceData, error: balanceError } = await supabase
+        .rpc('get_account_balances', { user_id_param: user.id });
 
-      // Fetch savings account
-      const { data: savingsAccountData, error: savingsError } = await supabase
-        .from('savings_accounts')
-        .select('*')
-        .eq('user_id', user?.id)
-        .single();
+      if (balanceError) throw balanceError;
 
-      if (savingsError && savingsError.code !== 'PGRST116') {
-        throw savingsError;
-      }
-
-      // Calculate actual balance based on past transactions only
-      let calculatedMainBalance = 0;
-      if (mainAccountData) {
-        const { data: pastTransactions, error: transError } = await supabase
-          .from('transactions')
-          .select('amount')
-          .eq('account_id', mainAccountData.id)
-          .lte('transaction_date', new Date().toISOString());
-
-        if (transError) throw transError;
-
-        calculatedMainBalance = (pastTransactions || []).reduce((sum, transaction) => {
-          return sum + transaction.amount;
-        }, 0);
-
-        // Update the main account balance in our state
+      if (balanceData && balanceData.length > 0) {
+        const { main_account_id, main_balance, savings_account_id, savings_balance } = balanceData[0];
+        
+        // Set main account with correct balance
         setMainAccount({
-          ...mainAccountData,
-          balance: calculatedMainBalance
+          id: main_account_id,
+          name: 'Main Account',
+          balance: main_balance,
+          type: 'checking',
+          currency: 'ILS'
+        });
+
+        // Set savings account with correct balance
+        setSavingsAccount({
+          id: savings_account_id,
+          name: 'Savings Account',
+          balance: savings_balance,
+          currency: 'ILS'
         });
       } else {
+        // If no data returned, accounts will be created on next call
         setMainAccount(null);
+        setSavingsAccount(null);
+        
+        // Try again to create accounts
+        setTimeout(() => {
+          fetchAccountData();
+        }, 1000);
       }
-
-      setSavingsAccount(savingsAccountData);
     } catch (error) {
       console.error('Error fetching account data:', error);
       toast({
