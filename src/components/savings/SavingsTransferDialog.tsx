@@ -95,6 +95,10 @@ export const SavingsTransferDialog = ({
       onOpenChange(false);
       setAmount('');
       setDescription('');
+      
+      // Trigger refresh events for balance and transactions
+      window.dispatchEvent(new CustomEvent('refreshBalances'));
+      window.dispatchEvent(new CustomEvent('refreshTransactions'));
     } catch (error) {
       console.error('Transfer error:', error);
       toast({

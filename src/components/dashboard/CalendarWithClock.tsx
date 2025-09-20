@@ -71,6 +71,13 @@ export const CalendarWithClock = ({ onAddTransaction }: { onAddTransaction?: () 
     }
   }, [user, currentDate]);
 
+  // Listen for transaction updates to refresh calendar
+  useEffect(() => {
+    const handleRefresh = () => fetchData();
+    window.addEventListener('refreshTransactions', handleRefresh);
+    return () => window.removeEventListener('refreshTransactions', handleRefresh);
+  }, []);
+
   const fetchData = async () => {
     setLoading(true);
     try {
@@ -291,15 +298,6 @@ export const CalendarWithClock = ({ onAddTransaction }: { onAddTransaction?: () 
       <div className="space-y-2">
         <div className="flex items-center justify-between">
           <label className="text-sm font-medium">Year</label>
-          <div className="flex items-center gap-1">
-            <Button variant="ghost" size="sm" onClick={() => navigateYears('prev')} className="h-6 w-6 p-0">
-              <ChevronLeft className="h-3 w-3" />
-            </Button>
-            <span className="text-xs text-muted-foreground">{yearRange.start}-{yearRange.end}</span>
-            <Button variant="ghost" size="sm" onClick={() => navigateYears('next')} className="h-6 w-6 p-0">
-              <ChevronRight className="h-3 w-3" />
-            </Button>
-          </div>
         </div>
         <div className="grid grid-cols-5 gap-1">
           {years.map(year => (
@@ -425,17 +423,6 @@ export const CalendarWithClock = ({ onAddTransaction }: { onAddTransaction?: () 
               <Button variant="outline" size="default" onClick={() => navigateMonth('next')}>
                 <ChevronRight className="h-4 w-4" />
               </Button>
-              
-              {onAddTransaction && (
-                <Button 
-                  onClick={onAddTransaction}
-                  size="default"
-                  className="flex items-center gap-2"
-                >
-                  <Plus className="h-4 w-4" />
-                  Add Transaction
-                </Button>
-              )}
             </div>
           </div>
         </div>

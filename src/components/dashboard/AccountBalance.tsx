@@ -171,12 +171,11 @@ export const AccountBalance = () => {
             <div className={`${isMobile ? 'self-start' : 'text-right'}`}>
               <Button
                 onClick={() => setShowTransferDialog(true)}
-                disabled={totalBalance <= 0}
-                className="bg-primary-foreground/20 text-primary-foreground border border-primary-foreground/30 hover:bg-primary-foreground/30 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="bg-primary-foreground/20 text-primary-foreground border border-primary-foreground/30 hover:bg-primary-foreground/30"
                 size="sm"
               >
                 <ArrowUpDown className="h-4 w-4 mr-2" />
-                {totalBalance <= 0 ? 'No Funds' : 'Transfer'}
+                Transfer
               </Button>
             </div>
           </div>
