@@ -2,7 +2,9 @@ import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ChevronLeft, ChevronRight, Calendar, Clock, DollarSign, Repeat } from "lucide-react";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { ChevronLeft, ChevronRight, Calendar, Clock, DollarSign, Repeat, CalendarIcon } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
@@ -205,11 +207,11 @@ export const CalendarWithClock = () => {
       case 'income':
         return 'bg-emerald-100 text-emerald-800 border-emerald-300 shadow-sm ring-1 ring-emerald-200';
       case 'recurring_income':
-        return 'bg-gradient-to-r from-emerald-100 to-blue-100 text-emerald-800 border-emerald-300 shadow-md ring-2 ring-emerald-300';
+        return 'bg-emerald-100 text-emerald-800 border-emerald-300 shadow-md ring-2 ring-emerald-300 relative overflow-hidden';
       case 'expense':
         return 'bg-red-100 text-red-800 border-red-300 shadow-sm ring-1 ring-red-200';
       case 'recurring_expense':
-        return 'bg-gradient-to-r from-red-100 to-blue-100 text-red-800 border-red-300 shadow-md ring-2 ring-red-300';
+        return 'bg-red-100 text-red-800 border-red-300 shadow-md ring-2 ring-red-300 relative overflow-hidden';
       default:
         return 'bg-gray-100 text-gray-700 border-gray-300 shadow-sm';
     }
@@ -219,6 +221,10 @@ export const CalendarWithClock = () => {
     setCurrentDate(prev => direction === 'prev' ? subMonths(prev, 1) : addMonths(prev, 1));
   };
 
+  const handleDateSelect = (year: number, month: number) => {
+    const newDate = new Date(year, month, 1);
+    setCurrentDate(newDate);
+  };
 
   const formatTime = (date: Date) => {
     return date.toLocaleTimeString('en-US', {
@@ -295,9 +301,57 @@ export const CalendarWithClock = () => {
               <ChevronLeft className="h-4 w-4" />
             </Button>
             
-            <h4 className="text-base sm:text-lg font-semibold">
-              {format(currentDate, 'MMMM yyyy')}
-            </h4>
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button variant="outline" className="text-base sm:text-lg font-semibold border-dashed">
+                  <CalendarIcon className="h-4 w-4 mr-2" />
+                  {format(currentDate, 'MMMM yyyy')}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-4" align="center">
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">Year</label>
+                    <Select 
+                      value={currentDate.getFullYear().toString()} 
+                      onValueChange={(value) => handleDateSelect(parseInt(value), currentDate.getMonth())}
+                    >
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {Array.from({ length: 20 }, (_, i) => {
+                          const year = new Date().getFullYear() - 10 + i;
+                          return (
+                            <SelectItem key={year} value={year.toString()}>
+                              {year}
+                            </SelectItem>
+                          );
+                        })}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">Month</label>
+                    <Select 
+                      value={currentDate.getMonth().toString()} 
+                      onValueChange={(value) => handleDateSelect(currentDate.getFullYear(), parseInt(value))}
+                    >
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {Array.from({ length: 12 }, (_, i) => (
+                          <SelectItem key={i} value={i.toString()}>
+                            {format(new Date(2024, i, 1), 'MMMM')}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+              </PopoverContent>
+            </Popover>
             
             <Button variant="outline" size="default" onClick={() => navigateMonth('next')}>
               <ChevronRight className="h-4 w-4" />
@@ -350,24 +404,33 @@ export const CalendarWithClock = () => {
                       className={`text-xs px-1 sm:px-2 py-1 rounded border ${getTransactionTypeColor(transaction.type)}`}
                       title={`${transaction.description} - ${formatCurrency(transaction.amount)}`}
                     >
-                      {isMobile ? (
-                        <div className="flex items-center justify-center">
-                          <span className="text-xs">{transaction.category?.icon || '💰'}</span>
+                      {/* Add split background for recurring transactions */}
+                      {(transaction.type === 'recurring_income' || transaction.type === 'recurring_expense') && (
+                        <div className="absolute inset-0 flex">
+                          <div className={`w-1/2 ${transaction.type === 'recurring_income' ? 'bg-emerald-100' : 'bg-red-100'}`}></div>
+                          <div className="w-1/2 bg-blue-100"></div>
                         </div>
-                      ) : (
-                        <>
-                          <div className="flex items-center gap-1 truncate">
-                            <span className="text-xs">{transaction.category?.icon || '💰'}</span>
-                            <span className="truncate">{transaction.description}</span>
-                          </div>
-                          <div className="font-semibold">
-                            {transaction.type === 'income' ? '+' : '-'}{formatCurrency(transaction.amount)}
-                          </div>
-                          <div className="text-xs text-muted-foreground truncate">
-                            {transaction.category?.name || 'Uncategorized'}
-                          </div>
-                        </>
                       )}
+                      <div className="relative z-10">
+                        {isMobile ? (
+                          <div className="flex items-center justify-center">
+                            <span className="text-xs">{transaction.category?.icon || '💰'}</span>
+                          </div>
+                        ) : (
+                          <>
+                            <div className="flex items-center gap-1 truncate">
+                              <span className="text-xs">{transaction.category?.icon || '💰'}</span>
+                              <span className="truncate">{transaction.description}</span>
+                            </div>
+                            <div className="font-semibold">
+                              {transaction.type === 'income' ? '+' : '-'}{formatCurrency(transaction.amount)}
+                            </div>
+                            <div className="text-xs text-muted-foreground truncate">
+                              {transaction.category?.name || 'Uncategorized'}
+                            </div>
+                          </>
+                        )}
+                      </div>
                     </div>
                   ))}
 
@@ -375,27 +438,34 @@ export const CalendarWithClock = () => {
                   {day.recurringTransactions.slice(0, 1).map(recurring => (
                     <div
                       key={`recurring-${recurring.id}`}
-                      className="text-xs px-1 sm:px-2 py-1 rounded border bg-gradient-to-r from-blue-100 to-cyan-100 text-blue-800 border-blue-300 ring-1 ring-blue-200"
+                      className="text-xs px-1 sm:px-2 py-1 rounded border bg-blue-100 text-blue-800 border-blue-300 ring-1 ring-blue-200 relative overflow-hidden"
                       title={`${recurring.name} - ${formatCurrency(recurring.amount)} (${recurring.frequency})`}
                     >
-                      {isMobile ? (
-                        <div className="flex items-center justify-center">
-                          <Repeat className="h-2 w-2" />
-                        </div>
-                      ) : (
-                        <>
-                          <div className="flex items-center gap-1 truncate">
-                            <Repeat className="h-3 w-3 flex-shrink-0" />
-                            <span className="truncate">{recurring.name}</span>
+                      {/* Split background for recurring */}
+                      <div className="absolute inset-0 flex">
+                        <div className={`w-1/2 ${recurring.type === 'income' ? 'bg-emerald-100' : 'bg-red-100'}`}></div>
+                        <div className="w-1/2 bg-blue-100"></div>
+                      </div>
+                      <div className="relative z-10">
+                        {isMobile ? (
+                          <div className="flex items-center justify-center">
+                            <Repeat className="h-2 w-2" />
                           </div>
-                          <div className="font-semibold">
-                            {recurring.type === 'income' ? '+' : '-'}{formatCurrency(recurring.amount)}
-                          </div>
-                          <div className="text-xs text-muted-foreground truncate">
-                            {recurring.frequency}
-                          </div>
-                        </>
-                      )}
+                        ) : (
+                          <>
+                            <div className="flex items-center gap-1 truncate">
+                              <Repeat className="h-3 w-3 flex-shrink-0" />
+                              <span className="truncate">{recurring.name}</span>
+                            </div>
+                            <div className="font-semibold">
+                              {recurring.type === 'income' ? '+' : '-'}{formatCurrency(recurring.amount)}
+                            </div>
+                            <div className="text-xs text-muted-foreground truncate">
+                              {recurring.frequency}
+                            </div>
+                          </>
+                        )}
+                      </div>
                     </div>
                   ))}
 
@@ -422,16 +492,21 @@ export const CalendarWithClock = () => {
             <span className="text-xs sm:text-sm text-muted-foreground">Expense</span>
           </div>
           <div className="flex items-center gap-2">
-            <div className="w-3 h-3 rounded bg-gradient-to-r from-emerald-100 to-blue-100 border border-emerald-300"></div>
+            <div className="w-3 h-3 rounded border border-emerald-300 flex overflow-hidden">
+              <div className="w-1/2 bg-emerald-100"></div>
+              <div className="w-1/2 bg-blue-100"></div>
+            </div>
             <span className="text-xs sm:text-sm text-muted-foreground">Recurring Income</span>
           </div>
           <div className="flex items-center gap-2">
-            <div className="w-3 h-3 rounded bg-gradient-to-r from-red-100 to-blue-100 border border-red-300"></div>
+            <div className="w-3 h-3 rounded border border-red-300 flex overflow-hidden">
+              <div className="w-1/2 bg-red-100"></div>
+              <div className="w-1/2 bg-blue-100"></div>
+            </div>
             <span className="text-xs sm:text-sm text-muted-foreground">Recurring Expense</span>
           </div>
         </div>
-        </div>
-
-      </Card>
-    );
+      </div>
+    </Card>
+  );
 };
