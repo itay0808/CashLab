@@ -3,7 +3,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { ChevronLeft, ChevronRight, Calendar, Clock, DollarSign, Repeat, CalendarIcon } from "lucide-react";
+import { ChevronLeft, ChevronRight, Calendar, Clock, DollarSign, Repeat, CalendarIcon, Plus } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
@@ -43,7 +43,7 @@ interface CalendarDay {
   isToday: boolean;
 }
 
-export const CalendarWithClock = () => {
+export const CalendarWithClock = ({ onAddTransaction }: { onAddTransaction?: () => void }) => {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [currentTime, setCurrentTime] = useState(new Date());
   const [calendarData, setCalendarData] = useState<CalendarDay[]>([]);
@@ -409,9 +409,22 @@ export const CalendarWithClock = () => {
               </PopoverContent>
             </Popover>
             
-            <Button variant="outline" size="default" onClick={() => navigateMonth('next')}>
-              <ChevronRight className="h-4 w-4" />
-            </Button>
+            <div className="flex items-center gap-2">
+              <Button variant="outline" size="default" onClick={() => navigateMonth('next')}>
+                <ChevronRight className="h-4 w-4" />
+              </Button>
+              
+              {onAddTransaction && (
+                <Button 
+                  onClick={onAddTransaction}
+                  size="default"
+                  className="flex items-center gap-2"
+                >
+                  <Plus className="h-4 w-4" />
+                  Add Transaction
+                </Button>
+              )}
+            </div>
           </div>
         </div>
 

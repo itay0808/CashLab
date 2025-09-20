@@ -8,12 +8,14 @@ import { CalendarWithClock } from "@/components/dashboard/CalendarWithClock";
 import { MergedActivityBox } from "@/components/dashboard/MergedActivityBox";
 import { BudgetOverview } from "@/components/budget/BudgetOverview";
 import { CreateBudgetDialog } from "@/components/budget/CreateBudgetDialog";
+import { AddTransactionDialog } from "@/components/transaction/AddTransactionDialog";
 import { useState } from "react";
 
 const Dashboard = () => {
   const { user, loading } = useAuth();
   const [refreshTrigger, setRefreshTrigger] = useState(0);
   const [showCreateBudget, setShowCreateBudget] = useState(false);
+  const [showAddTransaction, setShowAddTransaction] = useState(false);
 
   if (loading) {
     return (
@@ -49,7 +51,10 @@ const Dashboard = () => {
 
         {/* Main Calendar Section with integrated Clock - Featured */}
         <div className="space-y-4">
-          <CalendarWithClock key={refreshTrigger} />
+          <CalendarWithClock 
+            key={refreshTrigger} 
+            onAddTransaction={() => setShowAddTransaction(true)}
+          />
         </div>
 
         {/* Budget Section */}
@@ -73,6 +78,15 @@ const Dashboard = () => {
         open={showCreateBudget} 
         onOpenChange={setShowCreateBudget}
         onBudgetCreated={handleDataRefresh}
+      />
+      
+      <AddTransactionDialog 
+        open={showAddTransaction} 
+        onOpenChange={setShowAddTransaction}
+        onTransactionAdded={() => {
+          setShowAddTransaction(false);
+          handleDataRefresh();
+        }}
       />
     </div>
   );

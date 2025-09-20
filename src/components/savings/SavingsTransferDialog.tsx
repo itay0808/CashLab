@@ -47,21 +47,16 @@ export const SavingsTransferDialog = ({
       return;
     }
 
-    // Check sufficient funds
-    if (transferType === 'to_savings' && transferAmount > mainBalance) {
+    // Check maximum transferable amount (allow positive balance transfers only)
+    const maxTransferableAmount = transferType === 'to_savings' 
+      ? Math.max(0, mainBalance) 
+      : Math.max(0, savingsBalance);
+      
+    if (transferAmount > maxTransferableAmount) {
+      const accountName = transferType === 'to_savings' ? 'main account' : 'savings account';
       toast({
         title: "Error",
-        description: "Insufficient funds in main account",
-        variant: "destructive",
-      });
-      setLoading(false);
-      return;
-    }
-
-    if (transferType === 'from_savings' && transferAmount > savingsBalance) {
-      toast({
-        title: "Error",
-        description: "Insufficient funds in savings account",
+        description: `Cannot transfer more than available balance (₪${maxTransferableAmount}) from ${accountName}`,
         variant: "destructive",
       });
       setLoading(false);
@@ -116,7 +111,9 @@ export const SavingsTransferDialog = ({
     }
   };
 
-  const maxAmount = transferType === 'to_savings' ? mainBalance : savingsBalance;
+  const maxAmount = transferType === 'to_savings' 
+    ? Math.max(0, mainBalance) 
+    : Math.max(0, savingsBalance);
   const canTransfer = maxAmount > 0;
 
   return (
@@ -142,17 +139,17 @@ export const SavingsTransferDialog = ({
               <SelectContent>
                 <SelectItem 
                   value="to_savings" 
-                  disabled={mainBalance <= 0}
+                  disabled={Math.max(0, mainBalance) <= 0}
                 >
                   Main → Savings
-                  {mainBalance <= 0 && <span className="text-muted-foreground ml-2">(No funds)</span>}
+                  {Math.max(0, mainBalance) <= 0 && <span className="text-muted-foreground ml-2">(No transferable funds)</span>}
                 </SelectItem>
                 <SelectItem 
                   value="from_savings"
-                  disabled={savingsBalance <= 0}
+                  disabled={Math.max(0, savingsBalance) <= 0}
                 >
                   Savings → Main
-                  {savingsBalance <= 0 && <span className="text-muted-foreground ml-2">(No funds)</span>}
+                  {Math.max(0, savingsBalance) <= 0 && <span className="text-muted-foreground ml-2">(No transferable funds)</span>}
                 </SelectItem>
               </SelectContent>
             </Select>
@@ -177,8 +174,8 @@ export const SavingsTransferDialog = ({
               </div>
             </div>
             <p className="text-xs text-muted-foreground">
-              Available: ₪{maxAmount.toLocaleString('he-IL', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
-              {!canTransfer && <span className="text-destructive ml-2">• No funds available</span>}
+              Transferable: ₪{maxAmount.toLocaleString('he-IL', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
+              {!canTransfer && <span className="text-destructive ml-2">• No transferable funds</span>}
             </p>
           </div>
 
@@ -194,7 +191,7 @@ export const SavingsTransferDialog = ({
 
           <div className="flex flex-col gap-3 pt-4">
             <Button type="submit" disabled={loading || !canTransfer} size="lg">
-              {loading ? 'Processing...' : !canTransfer ? 'No Funds Available' : 'Transfer'}
+              {loading ? 'Processing...' : !canTransfer ? 'No Transferable Funds' : 'Transfer'}
             </Button>
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)} size="lg">
               Cancel
