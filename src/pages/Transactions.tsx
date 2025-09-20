@@ -3,7 +3,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { Navigation } from "@/components/navigation/Navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+
 import { Plus, Receipt } from "lucide-react";
 import { TransactionsList } from "@/components/dashboard/TransactionsList";
 
@@ -49,37 +49,25 @@ const Transactions = () => {
           </Button>
         </div>
 
-        <Tabs defaultValue="transactions" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-1">
-            <TabsTrigger value="transactions" className="gap-2">
-              <Receipt className="h-4 w-4" />
-              All Transactions
-            </TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="transactions">
-            <div className="space-y-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Recent Transactions</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <TransactionsList key={refreshTrigger} />
-                </CardContent>
-              </Card>
-              
-              <Card>
-                <CardHeader>
-                  <CardTitle>Recurring Transactions</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <RecurringTransactionsList key={refreshTrigger} />
-                </CardContent>
-              </Card>
-            </div>
-          </TabsContent>
-
-        </Tabs>
+        <div className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>Recent Transactions</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <TransactionsList key={refreshTrigger} />
+            </CardContent>
+          </Card>
+          
+          <Card>
+            <CardHeader>
+              <CardTitle>Recurring Transactions</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <RecurringTransactionsList key={refreshTrigger} />
+            </CardContent>
+          </Card>
+        </div>
       </main>
 
       <AddTransactionDialog 

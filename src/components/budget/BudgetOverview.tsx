@@ -3,9 +3,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { AlertTriangle, TrendingUp, DollarSign, Plus } from "lucide-react";
+import { AlertTriangle, TrendingUp, DollarSign, Plus, Edit } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { EditBudgetDialog } from "./EditBudgetDialog";
 
 interface BudgetPeriod {
   id: string;
@@ -32,6 +33,8 @@ interface BudgetOverviewProps {
 export const BudgetOverview = ({ onCreateBudget, refreshTrigger }: BudgetOverviewProps & { refreshTrigger?: number }) => {
   const [budgetPeriods, setBudgetPeriods] = useState<BudgetPeriod[]>([]);
   const [loading, setLoading] = useState(true);
+  const [editingBudget, setEditingBudget] = useState<any>(null);
+  const [showEditDialog, setShowEditDialog] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -197,6 +200,17 @@ export const BudgetOverview = ({ onCreateBudget, refreshTrigger }: BudgetOvervie
                         </div>
                       </div>
                       <div className="text-right flex items-center gap-2">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => {
+                            setEditingBudget(budgetPeriod.budget);
+                            setShowEditDialog(true);
+                          }}
+                          className="h-8 w-8 p-0"
+                        >
+                          <Edit className="h-4 w-4" />
+                        </Button>
                         {getStatusBadge(budgetPeriod.spent_amount, budgetPeriod.budgeted_amount, budgetPeriod.budget.alert_threshold)}
                         {progressPercentage >= budgetPeriod.budget.alert_threshold && (
                           <AlertTriangle className="h-4 w-4 text-warning" />
@@ -225,6 +239,15 @@ export const BudgetOverview = ({ onCreateBudget, refreshTrigger }: BudgetOvervie
           </div>
         )}
       </CardContent>
+      
+      <EditBudgetDialog
+        open={showEditDialog}
+        onOpenChange={setShowEditDialog}
+        budget={editingBudget}
+        onBudgetUpdated={() => {
+          fetchBudgetPeriods();
+        }}
+      />
     </Card>
   );
 };

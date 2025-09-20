@@ -205,11 +205,11 @@ export const CalendarWithClock = () => {
       case 'income':
         return 'bg-emerald-100 text-emerald-800 border-emerald-300 shadow-sm ring-1 ring-emerald-200';
       case 'recurring_income':
-        return 'bg-emerald-50 text-emerald-700 border-emerald-400 shadow-md ring-2 ring-emerald-300';
+        return 'bg-gradient-to-r from-emerald-100 to-blue-100 text-emerald-800 border-emerald-300 shadow-md ring-2 ring-emerald-300';
       case 'expense':
         return 'bg-red-100 text-red-800 border-red-300 shadow-sm ring-1 ring-red-200';
       case 'recurring_expense':
-        return 'bg-red-50 text-red-700 border-red-400 shadow-md ring-2 ring-red-300';
+        return 'bg-gradient-to-r from-red-100 to-blue-100 text-red-800 border-red-300 shadow-md ring-2 ring-red-300';
       default:
         return 'bg-gray-100 text-gray-700 border-gray-300 shadow-sm';
     }
@@ -352,16 +352,19 @@ export const CalendarWithClock = () => {
                     >
                       {isMobile ? (
                         <div className="flex items-center justify-center">
-                          <DollarSign className="h-2 w-2" />
+                          <span className="text-xs">{transaction.category?.icon || '💰'}</span>
                         </div>
                       ) : (
                         <>
                           <div className="flex items-center gap-1 truncate">
-                            <DollarSign className="h-3 w-3 flex-shrink-0" />
+                            <span className="text-xs">{transaction.category?.icon || '💰'}</span>
                             <span className="truncate">{transaction.description}</span>
                           </div>
                           <div className="font-semibold">
                             {transaction.type === 'income' ? '+' : '-'}{formatCurrency(transaction.amount)}
+                          </div>
+                          <div className="text-xs text-muted-foreground truncate">
+                            {transaction.category?.name || 'Uncategorized'}
                           </div>
                         </>
                       )}
@@ -372,7 +375,7 @@ export const CalendarWithClock = () => {
                   {day.recurringTransactions.slice(0, 1).map(recurring => (
                     <div
                       key={`recurring-${recurring.id}`}
-                      className="text-xs px-1 sm:px-2 py-1 rounded border bg-blue-100 text-blue-800 border-blue-300 ring-1 ring-blue-200"
+                      className="text-xs px-1 sm:px-2 py-1 rounded border bg-gradient-to-r from-blue-100 to-cyan-100 text-blue-800 border-blue-300 ring-1 ring-blue-200"
                       title={`${recurring.name} - ${formatCurrency(recurring.amount)} (${recurring.frequency})`}
                     >
                       {isMobile ? (
@@ -387,6 +390,9 @@ export const CalendarWithClock = () => {
                           </div>
                           <div className="font-semibold">
                             {recurring.type === 'income' ? '+' : '-'}{formatCurrency(recurring.amount)}
+                          </div>
+                          <div className="text-xs text-muted-foreground truncate">
+                            {recurring.frequency}
                           </div>
                         </>
                       )}
@@ -416,8 +422,12 @@ export const CalendarWithClock = () => {
             <span className="text-xs sm:text-sm text-muted-foreground">Expense</span>
           </div>
           <div className="flex items-center gap-2">
-            <div className="w-3 h-3 rounded bg-blue-100 border border-blue-300"></div>
-            <span className="text-xs sm:text-sm text-muted-foreground">Recurring</span>
+            <div className="w-3 h-3 rounded bg-gradient-to-r from-emerald-100 to-blue-100 border border-emerald-300"></div>
+            <span className="text-xs sm:text-sm text-muted-foreground">Recurring Income</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="w-3 h-3 rounded bg-gradient-to-r from-red-100 to-blue-100 border border-red-300"></div>
+            <span className="text-xs sm:text-sm text-muted-foreground">Recurring Expense</span>
           </div>
         </div>
         </div>

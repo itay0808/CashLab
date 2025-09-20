@@ -5,7 +5,7 @@ import { AccountBalance } from "@/components/dashboard/AccountBalance";
 import { SpendingChart } from "@/components/dashboard/SpendingChart";
 import { RecurringTransactionsList } from "@/components/recurring/RecurringTransactionsList";
 import { CalendarWithClock } from "@/components/dashboard/CalendarWithClock";
-import { TransactionsList } from "@/components/dashboard/TransactionsList";
+import { MergedActivityBox } from "@/components/dashboard/MergedActivityBox";
 import { BudgetOverview } from "@/components/budget/BudgetOverview";
 import { CreateBudgetDialog } from "@/components/budget/CreateBudgetDialog";
 import { useState } from "react";
@@ -64,13 +64,9 @@ const Dashboard = () => {
         {/* Analytics Row */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
           <SpendingChart key={refreshTrigger} />
-          <RecurringTransactionsList key={refreshTrigger} />
+          <MergedActivityBox key={refreshTrigger} />
         </div>
 
-        {/* Recent Activity Section */}
-        <div className="space-y-4">
-          <TransactionsList key={refreshTrigger} />
-        </div>
       </main>
 
       <CreateBudgetDialog 
