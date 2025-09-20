@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { ChevronLeft, ChevronRight, Calendar, Clock, DollarSign, Repeat, CalendarIcon, Plus } from "lucide-react";
+import { AddTransactionDialog } from "@/components/transaction/AddTransactionDialog";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
@@ -50,6 +51,7 @@ export const CalendarWithClock = ({ onAddTransaction }: { onAddTransaction?: () 
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [recurringTransactions, setRecurringTransactions] = useState<RecurringTransaction[]>([]);
   const [loading, setLoading] = useState(true);
+  const [showAddTransaction, setShowAddTransaction] = useState(false);
   const { user } = useAuth();
   const { toast } = useToast();
   const isMobile = useIsMobile();
@@ -359,16 +361,26 @@ export const CalendarWithClock = ({ onAddTransaction }: { onAddTransaction?: () 
                 <p className="text-xs sm:text-sm text-muted-foreground">View your financial activity by date</p>
               </div>
             </div>
-            
-            {/* Live Clock */}
-            <div className="flex items-center gap-3 bg-muted/30 rounded-lg p-3">
-              <Clock className="h-4 w-4 text-primary" />
-              <div className="text-center">
-                <div className="text-lg sm:text-xl font-mono font-bold text-primary">
-                  {formatTime(currentTime)}
-                </div>
-                <div className="text-xs sm:text-sm text-muted-foreground">
-                  {formatDate(currentTime)}
+            <div className="flex items-center gap-2">
+              <Button 
+                onClick={() => setShowAddTransaction(true)}
+                size="sm"
+                className="flex items-center gap-2"
+              >
+                <Plus className="h-4 w-4" />
+                Add Transaction
+              </Button>
+              
+              {/* Live Clock */}
+              <div className="flex items-center gap-3 bg-muted/30 rounded-lg p-3">
+                <Clock className="h-4 w-4 text-primary" />
+                <div className="text-center">
+                  <div className="text-lg sm:text-xl font-mono font-bold text-primary">
+                    {formatTime(currentTime)}
+                  </div>
+                  <div className="text-xs sm:text-sm text-muted-foreground">
+                    {formatDate(currentTime)}
+                  </div>
                 </div>
               </div>
             </div>
@@ -576,6 +588,15 @@ export const CalendarWithClock = ({ onAddTransaction }: { onAddTransaction?: () 
           </div>
         </div>
       </div>
+      
+      <AddTransactionDialog 
+        open={showAddTransaction} 
+        onOpenChange={setShowAddTransaction}
+        onTransactionAdded={() => {
+          setShowAddTransaction(false);
+          fetchData();
+        }}
+      />
     </Card>
   );
 };

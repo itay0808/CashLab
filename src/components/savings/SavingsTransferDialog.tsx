@@ -47,16 +47,12 @@ export const SavingsTransferDialog = ({
       return;
     }
 
-    // Check maximum transferable amount (allow positive balance transfers only)
-    const maxTransferableAmount = transferType === 'to_savings' 
-      ? Math.max(0, mainBalance) 
-      : Math.max(0, savingsBalance);
-      
-    if (transferAmount > maxTransferableAmount) {
-      const accountName = transferType === 'to_savings' ? 'main account' : 'savings account';
+    // Check if transfer amount exceeds available balance (allow negative balances)
+    const sourceBalance = transferType === 'to_savings' ? mainBalance : savingsBalance;
+    if (sourceBalance > 0 && transferAmount > sourceBalance) {
       toast({
         title: "Error",
-        description: `Cannot transfer more than available balance (₪${maxTransferableAmount}) from ${accountName}`,
+        description: `Cannot transfer more than available balance (₪${sourceBalance.toLocaleString('he-IL')})`,
         variant: "destructive",
       });
       setLoading(false);
@@ -111,10 +107,7 @@ export const SavingsTransferDialog = ({
     }
   };
 
-  const maxAmount = transferType === 'to_savings' 
-    ? Math.max(0, mainBalance) 
-    : Math.max(0, savingsBalance);
-  const canTransfer = maxAmount > 0;
+  const maxAmount = transferType === 'to_savings' ? Math.max(0, mainBalance) : Math.max(0, savingsBalance);
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
@@ -137,19 +130,13 @@ export const SavingsTransferDialog = ({
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem 
-                  value="to_savings" 
-                  disabled={Math.max(0, mainBalance) <= 0}
-                >
+                <SelectItem value="to_savings">
                   Main → Savings
-                  {Math.max(0, mainBalance) <= 0 && <span className="text-muted-foreground ml-2">(No transferable funds)</span>}
+                  {mainBalance <= 0 && <span className="text-muted-foreground ml-2">(Balance: ₪{mainBalance.toLocaleString('he-IL')})</span>}
                 </SelectItem>
-                <SelectItem 
-                  value="from_savings"
-                  disabled={Math.max(0, savingsBalance) <= 0}
-                >
+                <SelectItem value="from_savings">
                   Savings → Main
-                  {Math.max(0, savingsBalance) <= 0 && <span className="text-muted-foreground ml-2">(No transferable funds)</span>}
+                  {savingsBalance <= 0 && <span className="text-muted-foreground ml-2">(Balance: ₪{savingsBalance.toLocaleString('he-IL')})</span>}
                 </SelectItem>
               </SelectContent>
             </Select>
@@ -163,7 +150,7 @@ export const SavingsTransferDialog = ({
                 type="number"
                 step="0.01"
                 min="0"
-                max={maxAmount}
+                max={maxAmount || undefined}
                 placeholder="0.00"
                 value={amount}
                 onChange={(e) => setAmount(e.target.value)}
@@ -174,8 +161,8 @@ export const SavingsTransferDialog = ({
               </div>
             </div>
             <p className="text-xs text-muted-foreground">
-              Transferable: ₪{maxAmount.toLocaleString('he-IL', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
-              {!canTransfer && <span className="text-destructive ml-2">• No transferable funds</span>}
+              Max transfer: ₪{maxAmount.toLocaleString('he-IL', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
+              {maxAmount === 0 && <span className="text-warning ml-2">• Account has negative or zero balance</span>}
             </p>
           </div>
 
@@ -190,8 +177,8 @@ export const SavingsTransferDialog = ({
           </div>
 
           <div className="flex flex-col gap-3 pt-4">
-            <Button type="submit" disabled={loading || !canTransfer} size="lg">
-              {loading ? 'Processing...' : !canTransfer ? 'No Transferable Funds' : 'Transfer'}
+            <Button type="submit" disabled={loading} size="lg">
+              {loading ? 'Processing...' : 'Transfer'}
             </Button>
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)} size="lg">
               Cancel
