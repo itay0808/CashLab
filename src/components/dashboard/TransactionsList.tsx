@@ -167,9 +167,6 @@ export const TransactionsList = () => {
               <p className="text-sm text-muted-foreground">Current month transactions</p>
             </div>
           </div>
-          <Button variant="ghost" size="sm" className="text-primary hover:bg-primary/5">
-            View All
-          </Button>
         </div>
 
         {transactions.length === 0 ? (
@@ -178,10 +175,7 @@ export const TransactionsList = () => {
               <DollarSign className="h-10 w-10 text-muted-foreground" />
             </div>
             <h4 className="text-lg font-semibold mb-2">No transactions yet</h4>
-            <p className="text-muted-foreground mb-6">Start by adding your first financial transaction</p>
-            <Button className="bg-gradient-primary shadow-primary">
-              Add Transaction
-            </Button>
+            <p className="text-muted-foreground">Start by adding your first financial transaction</p>
           </div>
         ) : (
           <div className="space-y-3">

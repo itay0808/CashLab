@@ -3,7 +3,6 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ChevronLeft, ChevronRight, Calendar, Clock, DollarSign, Repeat, CalendarIcon } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
@@ -265,6 +264,86 @@ export const CalendarWithClock = () => {
     );
   }
 
+  // Year selector component
+  const YearSelector = ({ currentYear, onYearChange }: { currentYear: number, onYearChange: (year: number) => void }) => {
+    const [yearRange, setYearRange] = useState({ start: 2010, end: 2019 });
+
+    const navigateYears = (direction: 'prev' | 'next') => {
+      setYearRange(prev => ({
+        start: direction === 'prev' ? prev.start - 10 : prev.start + 10,
+        end: direction === 'prev' ? prev.end - 10 : prev.end + 10
+      }));
+    };
+
+    // Ensure current year is in visible range
+    useEffect(() => {
+      if (currentYear < yearRange.start || currentYear > yearRange.end) {
+        const startYear = Math.floor(currentYear / 10) * 10;
+        setYearRange({ start: startYear, end: startYear + 9 });
+      }
+    }, [currentYear, yearRange]);
+
+    const years = Array.from({ length: 10 }, (_, i) => yearRange.start + i);
+    
+    return (
+      <div className="space-y-2">
+        <div className="flex items-center justify-between">
+          <label className="text-sm font-medium">Year</label>
+          <div className="flex items-center gap-1">
+            <Button variant="ghost" size="sm" onClick={() => navigateYears('prev')} className="h-6 w-6 p-0">
+              <ChevronLeft className="h-3 w-3" />
+            </Button>
+            <span className="text-xs text-muted-foreground">{yearRange.start}-{yearRange.end}</span>
+            <Button variant="ghost" size="sm" onClick={() => navigateYears('next')} className="h-6 w-6 p-0">
+              <ChevronRight className="h-3 w-3" />
+            </Button>
+          </div>
+        </div>
+        <div className="grid grid-cols-5 gap-1">
+          {years.map(year => (
+            <Button
+              key={year}
+              variant={year === currentYear ? "default" : "outline"}
+              size="sm"
+              onClick={() => onYearChange(year)}
+              className="h-8 text-xs"
+              disabled={year > 2099}
+            >
+              {year}
+            </Button>
+          ))}
+        </div>
+      </div>
+    );
+  };
+
+  // Month grid component
+  const MonthGrid = ({ currentMonth, onMonthChange }: { currentMonth: number, onMonthChange: (month: number) => void }) => {
+    const months = [
+      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+    ];
+
+    return (
+      <div className="space-y-2">
+        <label className="text-sm font-medium">Month</label>
+        <div className="grid grid-cols-4 gap-1">
+          {months.map((month, index) => (
+            <Button
+              key={index}
+              variant={index === currentMonth ? "default" : "outline"}
+              size="sm"
+              onClick={() => onMonthChange(index)}
+              className="h-8 text-xs"
+            >
+              {month}
+            </Button>
+          ))}
+        </div>
+      </div>
+    );
+  };
+
   return (
     <Card className="bg-gradient-card shadow-elevated border-border/50">
       <div className="p-4 sm:p-6 space-y-4 sm:space-y-6">
@@ -310,45 +389,22 @@ export const CalendarWithClock = () => {
               </PopoverTrigger>
               <PopoverContent className="w-auto p-4" align="center">
                 <div className="space-y-4">
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium">Year</label>
-                    <Select 
-                      value={currentDate.getFullYear().toString()} 
-                      onValueChange={(value) => handleDateSelect(parseInt(value), currentDate.getMonth())}
-                    >
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {Array.from({ length: 20 }, (_, i) => {
-                          const year = new Date().getFullYear() - 10 + i;
-                          return (
-                            <SelectItem key={year} value={year.toString()}>
-                              {year}
-                            </SelectItem>
-                          );
-                        })}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium">Month</label>
-                    <Select 
-                      value={currentDate.getMonth().toString()} 
-                      onValueChange={(value) => handleDateSelect(currentDate.getFullYear(), parseInt(value))}
-                    >
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {Array.from({ length: 12 }, (_, i) => (
-                          <SelectItem key={i} value={i.toString()}>
-                            {format(new Date(2024, i, 1), 'MMMM')}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
+                  <YearSelector 
+                    currentYear={currentDate.getFullYear()}
+                    onYearChange={(year) => handleDateSelect(year, currentDate.getMonth())}
+                  />
+                  <MonthGrid 
+                    currentMonth={currentDate.getMonth()}
+                    onMonthChange={(month) => handleDateSelect(currentDate.getFullYear(), month)}
+                  />
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    onClick={() => setCurrentDate(new Date())}
+                    className="w-full"
+                  >
+                    Today
+                  </Button>
                 </div>
               </PopoverContent>
             </Popover>
