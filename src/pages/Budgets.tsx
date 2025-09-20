@@ -2,7 +2,7 @@ import { Navigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { Navigation } from "@/components/navigation/Navigation";
 import { BudgetOverview } from "@/components/budget/BudgetOverview";
-import { BudgetAnalytics } from "@/components/budget/BudgetAnalytics";
+
 import { BudgetManagementDialog } from "@/components/budget/BudgetManagementDialog";
 import { useState } from "react";
 
@@ -30,7 +30,6 @@ const Budgets = () => {
       <main className="max-w-7xl mx-auto p-6 space-y-8">
         <div className="space-y-6">
           <BudgetOverview onCreateBudget={() => setShowBudgetManagement(true)} refreshTrigger={refreshTrigger} />
-          <BudgetAnalytics />
         </div>
 
         <BudgetManagementDialog

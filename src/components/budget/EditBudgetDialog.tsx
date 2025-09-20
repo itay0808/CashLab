@@ -72,8 +72,6 @@ export const EditBudgetDialog = ({ open, onOpenChange, budget, onBudgetUpdated }
     const categoryId = formData.get('category') as string;
     const period = formData.get('period') as string;
     const alertThreshold = parseFloat(formData.get('alertThreshold') as string);
-    const startDate = formData.get('startDate') as string;
-    const endDate = formData.get('endDate') as string;
 
     try {
       const { error } = await supabase
@@ -84,8 +82,6 @@ export const EditBudgetDialog = ({ open, onOpenChange, budget, onBudgetUpdated }
           category_id: categoryId,
           period,
           alert_threshold: alertThreshold,
-          start_date: startDate,
-          end_date: endDate,
         })
         .eq('id', budget.id);
 
@@ -193,28 +189,6 @@ export const EditBudgetDialog = ({ open, onOpenChange, budget, onBudgetUpdated }
             />
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="startDate">Start Date</Label>
-              <Input
-                id="startDate"
-                name="startDate"
-                type="date"
-                defaultValue={budget.start_date}
-                required
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="endDate">End Date</Label>
-              <Input
-                id="endDate"
-                name="endDate"
-                type="date"
-                defaultValue={budget.end_date}
-                required
-              />
-            </div>
-          </div>
 
           <div className="flex flex-col gap-3 pt-4">
             <Button type="submit" disabled={loading} size="lg">

@@ -100,7 +100,7 @@ export const CreateBudgetDialog = ({ open, onOpenChange, onBudgetCreated }: Crea
     const categoryId = formData.get('category') as string;
     const amount = parseFloat(formData.get('amount') as string);
     const period = formData.get('period') as string;
-    const startDate = new Date(formData.get('startDate') as string);
+    const startDate = new Date(); // Always use current date
 
     try {
       // Create the budget
@@ -112,7 +112,7 @@ export const CreateBudgetDialog = ({ open, onOpenChange, onBudgetCreated }: Crea
           amount,
           period,
           start_date: startDate.toISOString().split('T')[0],
-          end_date: '2099-12-31', // Far future date for ongoing budgets
+          end_date: null, // No end date - budgets exist until deleted
           alert_threshold: alertThreshold[0],
           user_id: (await supabase.auth.getUser()).data.user?.id,
         })
@@ -209,16 +209,6 @@ export const CreateBudgetDialog = ({ open, onOpenChange, onBudgetCreated }: Crea
             </Select>
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="startDate">Start Date</Label>
-            <Input
-              id="startDate"
-              name="startDate"
-              type="date"
-              defaultValue={new Date().toISOString().split('T')[0]}
-              required
-            />
-          </div>
 
           <div className="space-y-3">
             <Label>Alert Threshold: {alertThreshold[0]}%</Label>

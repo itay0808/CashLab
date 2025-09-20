@@ -1,13 +1,11 @@
 import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ArrowUpRight, ArrowDownLeft, Calendar, Repeat, Edit, DollarSign } from "lucide-react";
+import { Calendar, Repeat, DollarSign } from "lucide-react";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import { startOfMonth, endOfMonth } from "date-fns";
-import { EditTransactionDialog } from "@/components/transaction/EditTransactionDialog";
 
 interface Transaction {
   id: string;
@@ -55,8 +53,6 @@ export const MergedActivityBox = () => {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [recurringTransactions, setRecurringTransactions] = useState<RecurringTransaction[]>([]);
   const [loading, setLoading] = useState(true);
-  const [editingTransaction, setEditingTransaction] = useState<Transaction | null>(null);
-  const [showEditDialog, setShowEditDialog] = useState(false);
   const { user } = useAuth();
   const { toast } = useToast();
 
@@ -131,54 +127,6 @@ export const MergedActivityBox = () => {
       });
     } finally {
       setLoading(false);
-    }
-  };
-
-  const handleDeleteTransaction = async (transactionId: string) => {
-    try {
-      const { error } = await supabase
-        .from('transactions')
-        .delete()
-        .eq('id', transactionId);
-
-      if (error) throw error;
-
-      toast({
-        title: "Success",
-        description: "Transaction deleted successfully",
-      });
-      
-      fetchData();
-    } catch (error) {
-      toast({
-        title: "Error", 
-        description: "Failed to delete transaction",
-        variant: "destructive",
-      });
-    }
-  };
-
-  const handleDeleteRecurring = async (recurringId: string) => {
-    try {
-      const { error } = await supabase
-        .from('recurring_transactions')
-        .update({ is_active: false })
-        .eq('id', recurringId);
-
-      if (error) throw error;
-
-      toast({
-        title: "Success",
-        description: "Recurring transaction stopped successfully",
-      });
-      
-      fetchData();
-    } catch (error) {
-      toast({
-        title: "Error", 
-        description: "Failed to stop recurring transaction",
-        variant: "destructive",
-      });
     }
   };
 
@@ -259,32 +207,13 @@ export const MergedActivityBox = () => {
                           </div>
                         </div>
 
-                        <div className="flex items-center gap-2">
-                          <div className={`text-right ${transaction.amount > 0 ? 'text-emerald-600' : 'text-red-600'}`}>
-                            <div className="text-sm font-bold">
-                              {transaction.amount > 0 ? '+' : ''}₪{Math.abs(transaction.amount).toFixed(0)}
-                            </div>
+                      <div className="flex items-center gap-2">
+                        <div className={`text-right ${transaction.amount > 0 ? 'text-emerald-600' : 'text-red-600'}`}>
+                          <div className="text-sm font-bold">
+                            {transaction.amount > 0 ? '+' : ''}₪{Math.abs(transaction.amount).toFixed(0)}
                           </div>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => {
-                              setEditingTransaction(transaction);
-                              setShowEditDialog(true);
-                            }}
-                            className="opacity-0 group-hover:opacity-100 h-8 w-8 p-0"
-                          >
-                            <Edit className="h-4 w-4" />
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => handleDeleteTransaction(transaction.id)}
-                            className="opacity-0 group-hover:opacity-100 h-8 w-8 p-0 text-destructive hover:text-destructive hover:bg-destructive/10"
-                          >
-                            ×
-                          </Button>
                         </div>
+                      </div>
                       </div>
                     </div>
                   ))}
@@ -330,14 +259,6 @@ export const MergedActivityBox = () => {
                               {recurring.amount > 0 ? '+' : ''}₪{Math.abs(recurring.amount).toFixed(0)}
                             </div>
                           </div>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => handleDeleteRecurring(recurring.id)}
-                            className="opacity-0 group-hover:opacity-100 h-8 w-8 p-0 text-destructive hover:text-destructive hover:bg-destructive/10"
-                          >
-                            ×
-                          </Button>
                         </div>
                       </div>
                     </div>
@@ -348,15 +269,6 @@ export const MergedActivityBox = () => {
           </div>
         </div>
       </Card>
-
-      <EditTransactionDialog
-        open={showEditDialog}
-        onOpenChange={setShowEditDialog}
-        transaction={editingTransaction}
-        onTransactionUpdated={() => {
-          fetchData();
-        }}
-      />
     </>
   );
 };
