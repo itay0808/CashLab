@@ -8,6 +8,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { transactionSchema } from '@/lib/validation';
 
 interface Category {
   id: string;
@@ -65,9 +66,31 @@ export const AddTransactionDialog = ({ open, onOpenChange, onTransactionAdded }:
     const categoryId = formData.get('category') as string;
     const type = formData.get('type') as string;
     const transactionDate = formData.get('date') as string;
-
     const recurring = formData.get('recurring') as string;
     const recurringEnd = formData.get('recurringEnd') as string;
+
+    // Validate input
+    const validation = transactionSchema.safeParse({
+      amount,
+      description,
+      notes: notes || undefined,
+      type,
+      date: transactionDate,
+      categoryId: categoryId || undefined,
+      recurring: recurring as any,
+      recurringEnd,
+    });
+
+    if (!validation.success) {
+      const errorMessage = validation.error.errors.map(err => err.message).join(', ');
+      toast({
+        title: "Validation Error",
+        description: errorMessage,
+        variant: "destructive",
+      });
+      setLoading(false);
+      return;
+    }
 
     try {
       const { data: user } = await supabase.auth.getUser();
@@ -196,6 +219,7 @@ export const AddTransactionDialog = ({ open, onOpenChange, onTransactionAdded }:
               type="number"
               step="0.01"
               min="0"
+              max="1000000000"
               placeholder="0.00"
               required
             />
@@ -207,6 +231,7 @@ export const AddTransactionDialog = ({ open, onOpenChange, onTransactionAdded }:
               id="description"
               name="description"
               placeholder="What was this for?"
+              maxLength={500}
               required
             />
           </div>
@@ -246,6 +271,7 @@ export const AddTransactionDialog = ({ open, onOpenChange, onTransactionAdded }:
               id="notes"
               name="notes"
               placeholder="Additional notes"
+              maxLength={1000}
               rows={2}
             />
           </div>
