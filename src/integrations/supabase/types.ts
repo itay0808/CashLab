@@ -178,12 +178,20 @@ export type Database = {
           parent_id?: string | null
           user_id?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "categories_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       profiles: {
         Row: {
           created_at: string
-          currency: string | null
+          currency: string
           email: string | null
           full_name: string | null
           id: string
@@ -192,7 +200,7 @@ export type Database = {
         }
         Insert: {
           created_at?: string
-          currency?: string | null
+          currency?: string
           email?: string | null
           full_name?: string | null
           id?: string
@@ -201,7 +209,7 @@ export type Database = {
         }
         Update: {
           created_at?: string
-          currency?: string | null
+          currency?: string
           email?: string | null
           full_name?: string | null
           id?: string
@@ -412,6 +420,10 @@ export type Database = {
           p_old_value?: Json
           p_user_id: string
         }
+        Returns: undefined
+      }
+      process_due_recurring_transactions: {
+        Args: Record<PropertyKey, never>
         Returns: undefined
       }
     }
