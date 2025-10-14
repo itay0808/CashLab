@@ -59,23 +59,32 @@ export const AccountBalance = () => {
       if (balanceError) throw balanceError;
 
       if (balanceData && balanceData.length > 0) {
-        const { main_account_id, main_balance, savings_account_id, savings_balance } = balanceData[0];
+        const { 
+          main_account_id, 
+          main_account_balance, 
+          main_account_name,
+          main_account_currency,
+          savings_account_id, 
+          savings_account_balance,
+          savings_account_name,
+          savings_account_currency
+        } = balanceData[0];
         
         // Set main account with correct balance
         setMainAccount({
           id: main_account_id,
-          name: 'Main Account',
-          balance: main_balance,
+          name: main_account_name || 'Main Account',
+          balance: main_account_balance || 0,
           type: 'checking',
-          currency: 'ILS'
+          currency: main_account_currency || 'ILS'
         });
 
         // Set savings account with correct balance
         setSavingsAccount({
           id: savings_account_id,
-          name: 'Savings Account',
-          balance: savings_balance,
-          currency: 'ILS'
+          name: savings_account_name || 'Savings Account',
+          balance: savings_account_balance || 0,
+          currency: savings_account_currency || 'ILS'
         });
       } else {
         // If no data returned, accounts will be created on next call

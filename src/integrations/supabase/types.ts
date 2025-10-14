@@ -50,8 +50,53 @@ export type Database = {
         }
         Relationships: []
       }
+      budget_periods: {
+        Row: {
+          budget_id: string
+          budgeted_amount: number
+          created_at: string
+          id: string
+          is_current: boolean
+          period_end: string
+          period_start: string
+          spent_amount: number
+          updated_at: string
+        }
+        Insert: {
+          budget_id: string
+          budgeted_amount: number
+          created_at?: string
+          id?: string
+          is_current?: boolean
+          period_end: string
+          period_start: string
+          spent_amount?: number
+          updated_at?: string
+        }
+        Update: {
+          budget_id?: string
+          budgeted_amount?: number
+          created_at?: string
+          id?: string
+          is_current?: boolean
+          period_end?: string
+          period_start?: string
+          spent_amount?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "budget_periods_budget_id_fkey"
+            columns: ["budget_id"]
+            isOneToOne: false
+            referencedRelation: "budgets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       budgets: {
         Row: {
+          alert_threshold: number
           amount: number
           category_id: string | null
           created_at: string
@@ -65,6 +110,7 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          alert_threshold?: number
           amount: number
           category_id?: string | null
           created_at?: string
@@ -78,6 +124,7 @@ export type Database = {
           user_id: string
         }
         Update: {
+          alert_threshold?: number
           amount?: number
           category_id?: string | null
           created_at?: string
@@ -141,6 +188,51 @@ export type Database = {
           },
         ]
       }
+      investments: {
+        Row: {
+          created_at: string
+          current_price: number | null
+          id: string
+          investment_type: string
+          name: string
+          notes: string | null
+          purchase_date: string
+          purchase_price: number
+          quantity: number
+          symbol: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          current_price?: number | null
+          id?: string
+          investment_type: string
+          name: string
+          notes?: string | null
+          purchase_date: string
+          purchase_price: number
+          quantity: number
+          symbol?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          current_price?: number | null
+          id?: string
+          investment_type?: string
+          name?: string
+          notes?: string | null
+          purchase_date?: string
+          purchase_price?: number
+          quantity?: number
+          symbol?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           created_at: string
@@ -181,7 +273,8 @@ export type Database = {
           frequency: string
           id: string
           is_active: boolean
-          next_date: string
+          name: string
+          next_due_date: string
           type: string
           updated_at: string
           user_id: string
@@ -195,7 +288,8 @@ export type Database = {
           frequency: string
           id?: string
           is_active?: boolean
-          next_date: string
+          name: string
+          next_due_date: string
           type: string
           updated_at?: string
           user_id: string
@@ -209,7 +303,8 @@ export type Database = {
           frequency?: string
           id?: string
           is_active?: boolean
-          next_date?: string
+          name?: string
+          next_due_date?: string
           type?: string
           updated_at?: string
           user_id?: string
@@ -341,7 +436,33 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      get_account_balances: {
+        Args: { user_id_param: string }
+        Returns: {
+          main_account_balance: number
+          main_account_currency: string
+          main_account_id: string
+          main_account_name: string
+          savings_account_balance: number
+          savings_account_currency: string
+          savings_account_id: string
+          savings_account_name: string
+        }[]
+      }
+      log_financial_activity: {
+        Args: {
+          p_action_type: string
+          p_amount?: number
+          p_description: string
+          p_entity_id: string
+          p_entity_type: string
+          p_metadata?: Json
+          p_new_value?: Json
+          p_old_value?: Json
+          p_user_id: string
+        }
+        Returns: undefined
+      }
     }
     Enums: {
       [_ in never]: never

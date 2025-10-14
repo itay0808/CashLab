@@ -147,16 +147,14 @@ export const AddTransactionDialog = ({ open, onOpenChange, onTransactionAdded }:
         await supabase
           .from('recurring_transactions')
           .insert([{
+            description,
             name: description,
             amount: type === 'expense' ? -Math.abs(amount) : Math.abs(amount),
             type,
             frequency: recurring,
-            start_date: transactionDate,
-            end_date: recurringEnd || null,
             next_due_date: nextDueDate.toISOString().split('T')[0],
             account_id: mainAccountId,
             category_id: categoryId || null,
-            notes: notes || null,
             user_id: user.user.id,
           }]);
       }
