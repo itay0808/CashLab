@@ -1,12 +1,10 @@
 import { Card } from "@/components/ui/card";
-import { TrendingUp, TrendingDown, ArrowUpDown, Wallet, PiggyBank } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Wallet, PiggyBank } from "lucide-react";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { SavingsTransferDialog } from "@/components/savings/SavingsTransferDialog";
 
 interface MainAccount {
   id: string;
@@ -28,7 +26,6 @@ export const AccountBalance = () => {
   const [mainAccount, setMainAccount] = useState<MainAccount | null>(null);
   const [savingsAccount, setSavingsAccount] = useState<SavingsAccount | null>(null);
   const [loading, setLoading] = useState(true);
-  const [showTransferDialog, setShowTransferDialog] = useState(false);
   const { user } = useAuth();
   const { toast } = useToast();
   const isMobile = useIsMobile();
@@ -101,10 +98,6 @@ export const AccountBalance = () => {
       setLoading(false);
     }
   };
-
-  const handleTransferCompleted = () => {
-    fetchAccountData();
-  };
   
   if (loading) {
     return (
@@ -136,7 +129,7 @@ export const AccountBalance = () => {
         </div>
         
         <div className="relative p-4 sm:p-6">
-          <div className={`flex ${isMobile ? 'flex-col gap-4' : 'items-center justify-between'} mb-6 sm:mb-8`}>
+          <div className="mb-6 sm:mb-8">
             <div className="space-y-1">
               <div className="flex items-center gap-2 text-primary-foreground/70">
                 <div className="w-2 h-2 bg-primary-foreground rounded-full"></div>
@@ -147,16 +140,6 @@ export const AccountBalance = () => {
                   ₪{totalBalance.toLocaleString('he-IL', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
                 </span>
               </div>
-            </div>
-            <div className={`${isMobile ? 'self-start' : 'text-right'}`}>
-              <Button
-                onClick={() => setShowTransferDialog(true)}
-                className="bg-primary-foreground/20 text-primary-foreground border border-primary-foreground/30 hover:bg-primary-foreground/30"
-                size="sm"
-              >
-                <ArrowUpDown className="h-4 w-4 mr-2" />
-                Transfer
-              </Button>
             </div>
           </div>
           
@@ -203,14 +186,6 @@ export const AccountBalance = () => {
           </div>
         </div>
       </Card>
-
-      <SavingsTransferDialog
-        open={showTransferDialog}
-        onOpenChange={setShowTransferDialog}
-        onTransferCompleted={handleTransferCompleted}
-        mainBalance={mainAccount?.balance || 0}
-        savingsBalance={savingsAccount?.balance || 0}
-      />
     </>
   );
 };
