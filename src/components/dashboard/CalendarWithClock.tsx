@@ -113,7 +113,8 @@ export const CalendarWithClock = ({ onAddTransaction }: { onAddTransaction?: () 
           amount,
           next_due_date,
           frequency,
-          type
+          type,
+          category:categories(name, icon)
         `)
         .eq('user_id', user?.id)
         .eq('is_active', true);

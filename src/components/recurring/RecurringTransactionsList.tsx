@@ -44,8 +44,10 @@ export const RecurringTransactionsList = () => {
           next_due_date,
           frequency,
           is_active,
-          type
+          type,
+          category:categories(name, icon)
         `)
+        .eq('user_id', user?.id)
         .eq('is_active', true)
         .order('next_due_date', { ascending: true });
 
