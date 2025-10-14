@@ -188,51 +188,6 @@ export type Database = {
           },
         ]
       }
-      investments: {
-        Row: {
-          created_at: string
-          current_price: number | null
-          id: string
-          investment_type: string
-          name: string
-          notes: string | null
-          purchase_date: string
-          purchase_price: number
-          quantity: number
-          symbol: string | null
-          updated_at: string
-          user_id: string
-        }
-        Insert: {
-          created_at?: string
-          current_price?: number | null
-          id?: string
-          investment_type: string
-          name: string
-          notes?: string | null
-          purchase_date: string
-          purchase_price: number
-          quantity: number
-          symbol?: string | null
-          updated_at?: string
-          user_id: string
-        }
-        Update: {
-          created_at?: string
-          current_price?: number | null
-          id?: string
-          investment_type?: string
-          name?: string
-          notes?: string | null
-          purchase_date?: string
-          purchase_price?: number
-          quantity?: number
-          symbol?: string | null
-          updated_at?: string
-          user_id?: string
-        }
-        Relationships: []
-      }
       profiles: {
         Row: {
           created_at: string
@@ -448,6 +403,10 @@ export type Database = {
           savings_account_id: string
           savings_account_name: string
         }[]
+      }
+      get_budget_user_id: {
+        Args: { budget_id_param: string }
+        Returns: string
       }
       log_financial_activity: {
         Args: {
