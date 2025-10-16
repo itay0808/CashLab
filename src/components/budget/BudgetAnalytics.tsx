@@ -64,15 +64,11 @@ export const BudgetAnalytics = ({ refreshTrigger = 0 }: BudgetAnalyticsProps) =>
         .from('accounts')
         .select('id')
         .eq('user_id', user.id)
-        .eq('type', 'main')
+        .eq('type', 'checking')
         .eq('is_active', true)
-        .maybeSingle();
+        .single();
 
       if (accountError) throw accountError;
-
-      if (!mainAccount) {
-        return;
-      }
 
       // Calculate current balance from past transactions only
       const { data: pastTransactions, error: pastError } = await supabase

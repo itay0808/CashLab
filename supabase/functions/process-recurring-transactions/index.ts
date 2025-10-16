@@ -47,7 +47,7 @@ serve(async (req) => {
     return new Response(
       JSON.stringify({ 
         error: 'Failed to process recurring transactions', 
-        details: error instanceof Error ? error.message : 'Unknown error'
+        details: error.message 
       }),
       {
         status: 500,

@@ -8,7 +8,6 @@ import { Slider } from '@/components/ui/slider';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { useIsMobile } from '@/hooks/use-mobile';
-import { budgetSchema } from '@/lib/validation';
 
 interface Category {
   id: string;
@@ -103,26 +102,6 @@ export const CreateBudgetDialog = ({ open, onOpenChange, onBudgetCreated }: Crea
     const period = formData.get('period') as string;
     const startDate = new Date(); // Always use current date
 
-    // Validate input
-    const validation = budgetSchema.safeParse({
-      name,
-      categoryId,
-      amount,
-      period,
-      alertThreshold: alertThreshold[0],
-    });
-
-    if (!validation.success) {
-      const errorMessage = validation.error.errors.map(err => err.message).join(', ');
-      toast({
-        title: "Validation Error",
-        description: errorMessage,
-        variant: "destructive",
-      });
-      setLoading(false);
-      return;
-    }
-
     try {
       // Create the budget
       const { data: budget, error: budgetError } = await supabase
@@ -181,7 +160,6 @@ export const CreateBudgetDialog = ({ open, onOpenChange, onBudgetCreated }: Crea
               id="name"
               name="name"
               placeholder="e.g., Monthly Groceries"
-              maxLength={200}
               required
             />
           </div>
@@ -212,7 +190,6 @@ export const CreateBudgetDialog = ({ open, onOpenChange, onBudgetCreated }: Crea
               type="number"
               step="0.01"
               min="0"
-              max="1000000000"
               placeholder="500.00"
               required
             />

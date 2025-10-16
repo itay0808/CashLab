@@ -6,19 +6,15 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Eye, EyeOff, DollarSign } from "lucide-react";
-import { signInSchema } from "@/lib/validation";
-import { useToast } from "@/hooks/use-toast";
 
 const Auth = () => {
   const { user, loading, signIn } = useAuth();
-  const { toast } = useToast();
   const [showPassword, setShowPassword] = useState(false);
 
   // Sign In State
   const [signInEmail, setSignInEmail] = useState("");
   const [signInPassword, setSignInPassword] = useState("");
   const [signInLoading, setSignInLoading] = useState(false);
-  const [validationErrors, setValidationErrors] = useState<{ email?: string; password?: string }>({});
 
   if (loading) {
     return (
@@ -35,29 +31,6 @@ const Auth = () => {
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
-    setValidationErrors({});
-    
-    // Validate input
-    const validation = signInSchema.safeParse({
-      email: signInEmail,
-      password: signInPassword,
-    });
-
-    if (!validation.success) {
-      const errors: { email?: string; password?: string } = {};
-      validation.error.errors.forEach((err) => {
-        if (err.path[0] === 'email') errors.email = err.message;
-        if (err.path[0] === 'password') errors.password = err.message;
-      });
-      setValidationErrors(errors);
-      toast({
-        title: "Validation Error",
-        description: "Please check your input and try again.",
-        variant: "destructive",
-      });
-      return;
-    }
-
     setSignInLoading(true);
     
     try {
@@ -107,17 +80,10 @@ const Auth = () => {
                   type="email"
                   placeholder="Enter your email"
                   value={signInEmail}
-                  onChange={(e) => {
-                    setSignInEmail(e.target.value);
-                    setValidationErrors(prev => ({ ...prev, email: undefined }));
-                  }}
+                  onChange={(e) => setSignInEmail(e.target.value)}
                   className="h-12 bg-background/50 border-border/50 focus:border-primary"
-                  maxLength={255}
                   required
                 />
-                {validationErrors.email && (
-                  <p className="text-sm text-destructive">{validationErrors.email}</p>
-                )}
               </div>
 
               <div className="space-y-2">
@@ -128,17 +94,10 @@ const Auth = () => {
                     type={showPassword ? "text" : "password"}
                     placeholder="Enter your password"
                     value={signInPassword}
-                    onChange={(e) => {
-                      setSignInPassword(e.target.value);
-                      setValidationErrors(prev => ({ ...prev, password: undefined }));
-                    }}
+                    onChange={(e) => setSignInPassword(e.target.value)}
                     className="h-12 bg-background/50 border-border/50 focus:border-primary pr-12"
-                    maxLength={128}
                     required
                   />
-                  {validationErrors.password && (
-                    <p className="text-sm text-destructive mt-1">{validationErrors.password}</p>
-                  )}
                   <Button
                     type="button"
                     variant="ghost"

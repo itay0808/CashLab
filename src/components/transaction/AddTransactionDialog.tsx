@@ -8,7 +8,6 @@ import { Textarea } from '@/components/ui/textarea';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { useIsMobile } from '@/hooks/use-mobile';
-import { transactionSchema } from '@/lib/validation';
 
 interface Category {
   id: string;
@@ -44,16 +43,14 @@ export const AddTransactionDialog = ({ open, onOpenChange, onTransactionAdded }:
       .order('name');
     
     if (error) {
-      console.error('Category fetch error:', error);
       toast({
         title: "Error",
-        description: `Failed to load categories: ${error.message}`,
+        description: "Failed to load categories",
         variant: "destructive",
       });
       return;
     }
     
-    console.log('Fetched categories:', data);
     setCategories(data || []);
   };
 
@@ -68,31 +65,9 @@ export const AddTransactionDialog = ({ open, onOpenChange, onTransactionAdded }:
     const categoryId = formData.get('category') as string;
     const type = formData.get('type') as string;
     const transactionDate = formData.get('date') as string;
+
     const recurring = formData.get('recurring') as string;
     const recurringEnd = formData.get('recurringEnd') as string;
-
-    // Validate input
-    const validation = transactionSchema.safeParse({
-      amount,
-      description,
-      notes: notes || undefined,
-      type,
-      date: transactionDate,
-      categoryId: categoryId || undefined,
-      recurring: recurring as any,
-      recurringEnd,
-    });
-
-    if (!validation.success) {
-      const errorMessage = validation.error.errors.map(err => err.message).join(', ');
-      toast({
-        title: "Validation Error",
-        description: errorMessage,
-        variant: "destructive",
-      });
-      setLoading(false);
-      return;
-    }
 
     try {
       const { data: user } = await supabase.auth.getUser();
@@ -149,14 +124,16 @@ export const AddTransactionDialog = ({ open, onOpenChange, onTransactionAdded }:
         await supabase
           .from('recurring_transactions')
           .insert([{
-            description,
             name: description,
             amount: type === 'expense' ? -Math.abs(amount) : Math.abs(amount),
             type,
             frequency: recurring,
+            start_date: transactionDate,
+            end_date: recurringEnd || null,
             next_due_date: nextDueDate.toISOString().split('T')[0],
             account_id: mainAccountId,
             category_id: categoryId || null,
+            notes: notes || null,
             user_id: user.user.id,
           }]);
       }
@@ -178,12 +155,11 @@ export const AddTransactionDialog = ({ open, onOpenChange, onTransactionAdded }:
       onOpenChange(false);
       (e.target as HTMLFormElement).reset();
 
-    } catch (error: any) {
+    } catch (error) {
       console.error('Transaction error:', error);
-      const errorMessage = error?.message || 'Failed to add transaction';
       toast({
         title: "Error",
-        description: errorMessage,
+        description: "Failed to add transaction",
         variant: "destructive",
       });
     } finally {
@@ -220,7 +196,6 @@ export const AddTransactionDialog = ({ open, onOpenChange, onTransactionAdded }:
               type="number"
               step="0.01"
               min="0"
-              max="1000000000"
               placeholder="0.00"
               required
             />
@@ -232,7 +207,6 @@ export const AddTransactionDialog = ({ open, onOpenChange, onTransactionAdded }:
               id="description"
               name="description"
               placeholder="What was this for?"
-              maxLength={500}
               required
             />
           </div>
@@ -272,7 +246,6 @@ export const AddTransactionDialog = ({ open, onOpenChange, onTransactionAdded }:
               id="notes"
               name="notes"
               placeholder="Additional notes"
-              maxLength={1000}
               rows={2}
             />
           </div>
