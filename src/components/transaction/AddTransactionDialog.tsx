@@ -44,14 +44,16 @@ export const AddTransactionDialog = ({ open, onOpenChange, onTransactionAdded }:
       .order('name');
     
     if (error) {
+      console.error('Category fetch error:', error);
       toast({
         title: "Error",
-        description: "Failed to load categories",
+        description: `Failed to load categories: ${error.message}`,
         variant: "destructive",
       });
       return;
     }
     
+    console.log('Fetched categories:', data);
     setCategories(data || []);
   };
 
