@@ -178,11 +178,12 @@ export const AddTransactionDialog = ({ open, onOpenChange, onTransactionAdded }:
       onOpenChange(false);
       (e.target as HTMLFormElement).reset();
 
-    } catch (error) {
+    } catch (error: any) {
       console.error('Transaction error:', error);
+      const errorMessage = error?.message || 'Failed to add transaction';
       toast({
         title: "Error",
-        description: "Failed to add transaction",
+        description: errorMessage,
         variant: "destructive",
       });
     } finally {
