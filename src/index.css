@@ -1,0 +1,87 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Modern Fintech Design System - Rocket Money Style */
+
+@layer base {
+  :root {
+    --background: 249 10% 98%;
+    --foreground: 224 20% 15%;
+    
+    /* Fintech brand colors - Green theme */
+    --primary: 142 76% 36%;
+    --primary-light: 142 69% 58%;
+    --primary-dark: 139 81% 28%;
+    --secondary: 210 100% 96%;
+    --success: 142 76% 36%;
+    --success-light: 142 69% 58%;
+    --warning: 38 92% 50%;
+    --danger: 0 84% 60%;
+    
+    /* Gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(142 76% 36%), hsl(158 64% 52%));
+    --gradient-success: linear-gradient(135deg, hsl(142 76% 36%), hsl(158 64% 52%));
+    --gradient-card: linear-gradient(135deg, hsl(0 0% 100%), hsl(249 32% 97%));
+    --gradient-subtle: linear-gradient(180deg, hsl(249 32% 97%), hsl(0 0% 100%));
+    
+    /* Shadows */
+    --shadow-card: 0 1px 3px 0 hsl(0 0% 0% / 0.1), 0 1px 2px -1px hsl(0 0% 0% / 0.1);
+    --shadow-elevated: 0 10px 15px -3px hsl(0 0% 0% / 0.1), 0 4px 6px -4px hsl(0 0% 0% / 0.1);
+    --shadow-primary: 0 10px 30px -10px hsl(142 76% 36% / 0.3);
+    
+    /* Semantic UI colors */
+    --card: 0 0% 100%;
+    --card-foreground: 224 20% 15%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 224 20% 15%;
+
+    --primary-foreground: 0 0% 100%;
+
+    --muted: 249 32% 97%;
+    --muted-foreground: 224 15% 55%;
+
+    --accent: 142 76% 36%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 224 25% 90%;
+    --input: 224 25% 90%;
+    --ring: 142 76% 36%;
+
+    --radius: 0.5rem;
+
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 240 5.9% 10%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 240 4.8% 95.9%;
+    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+    
+    /* Mobile optimizations for S20 FE 5G (6.5" display, 1080x2400px) */
+    --mobile-padding: 1rem;
+    --mobile-padding-sm: 0.75rem;
+    --mobile-font-xs: 0.75rem;
+    --mobile-font-sm: 0.875rem;
+    --mobile-font-base: 1rem;
+    --mobile-font-lg: 1.125rem;
+    --mobile-spacing: 0.75rem;
+    --mobile-nav-height: 3.5rem;
+    --mobile-header-height: 4rem;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+}
